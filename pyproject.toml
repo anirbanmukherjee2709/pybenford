@@ -1,0 +1,81 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pybenford"
+version = "0.1.0"
+description = "Professional-grade Benford's Law analysis toolkit for forensic accounting, auditing, and fraud detection"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Anirban Mukherjee"},
+]
+keywords = [
+    "benford", "forensic-accounting", "fraud-detection",
+    "auditing", "digit-analysis", "statistical-testing",
+    "nigrini", "MAD", "conformity"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Accounting",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Typing :: Typed",
+]
+dependencies = [
+    "numpy>=1.21.0",
+    "pandas>=1.3.0",
+    "matplotlib>=3.4.0",
+    "scipy>=1.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4.0",
+    "mypy>=1.0",
+    "pre-commit>=3.0",
+    "build>=1.0",
+    "twine>=5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/anirbanmukherjee2709/pybenford"
+Repository = "https://github.com/anirbanmukherjee2709/pybenford"
+Documentation = "https://github.com/anirbanmukherjee2709/pybenford#readme"
+Issues = "https://github.com/anirbanmukherjee2709/pybenford/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pybenford"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pybenford"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=pybenford --cov-report=term-missing --strict-markers"
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
