@@ -67,8 +67,15 @@ def _significand(values: ArrayLike) -> NDArray[np.float64]:
         return result
 
     v = abs_arr[valid]
-    order = np.floor(np.log10(v))
-    m = v / (10.0 ** order)
+    log_v = np.log10(v)
+    order = np.floor(log_v)
+    with np.errstate(divide="ignore"):
+        m = v / (10.0 ** order)
+    # For subnormal floats, 10**order underflows to 0 and m becomes inf.
+    # Recompute those via the log fractional part which avoids the underflow.
+    inf_mask = np.isinf(m)
+    if inf_mask.any():
+        m[inf_mask] = 10.0 ** (log_v[inf_mask] - order[inf_mask])
     # Floating-point drift at exact powers of 10 or very large magnitudes
     # can push m just below 1 or at/above 10. Clamp back to [1, 10).
     below = m < 1.0

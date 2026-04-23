@@ -68,7 +68,7 @@ P(D2 = d2) = sum over d1=1..9 of log10(1 + 1/(d1*10 + d2))
 
 K = 10. Degrees of freedom for chi-square = 9.
 
-**Conditional second digit** (Nigrini Eq. 4.1): P(D2=d2 | D1=d1) = log(1 + 1/(d1*d2)) / log(1 + 1/d1).
+**Conditional second digit** (Nigrini Eq. 4.1): P(D2=d2 | D1=d1) = log10(1 + 1/(10*d1 + d2)) / log10(1 + 1/d1).
 The largest bias toward low digits occurs when d1=1; smallest bias when d1=9.
 
 ### 1.4 First-Two Digits (d = 10..99) — Nigrini Eq. 1.3
