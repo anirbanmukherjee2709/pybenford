@@ -109,6 +109,31 @@ class DistortionResult:
     direction: str
     percentage: float
 
+    def __str__(self) -> str:
+        w = 55
+        border = "=" * w
+        lines: list[str] = [border, "  Distortion Factor Test", border]
+
+        direction_label = ""
+        if self.direction == "understated":
+            direction_label = " (Understated)"
+        elif self.direction == "overstated":
+            direction_label = " (Overstated)"
+
+        lines.append(
+            f" Distortion Factor:  {self.distortion_factor:.4f}{direction_label}"
+        )
+        lines.append(f" Actual Mean:         {self.actual_mean:.4f}")
+        lines.append(f" Expected Mean:       {self.expected_mean:.4f}")
+        lines.append(
+            f" Z-Statistic:         {self.z_statistic:.4f}"
+            f"  (p={self.p_value:.4f})"
+        )
+        sig_label = "Yes" if self.significant else "No"
+        lines.append(f" Significant:         {sig_label}")
+        lines.append(border)
+        return "\n".join(lines)
+
 
 @dataclass(frozen=True)
 class MantissaArcResult:
@@ -119,6 +144,25 @@ class MantissaArcResult:
     mean_y: float
     L2: float
     p_value: float
+
+    def __str__(self) -> str:
+        import math
+
+        w = 55
+        border = "=" * w
+        lines: list[str] = [border, "  Mantissa Arc Test", border]
+        lines.append(
+            f" Gravity Center:  ({self.mean_x:.4f}, {self.mean_y:.4f})"
+        )
+        lines.append(f" L2 Statistic:     {self.L2:.4f}")
+        deg = self.mean_angle * 180.0 / math.pi
+        lines.append(
+            f" Mean Angle:        {self.mean_angle:.4f} rad"
+            f"  ({deg:.2f} deg)"
+        )
+        lines.append(f" P-Value:           {self.p_value:.4f}")
+        lines.append(border)
+        return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
@@ -318,7 +362,7 @@ def ks_test(
     return KSResult(
         statistic=d_stat,
         critical_value=float(crit),
-        significant=d_stat > crit,
+        significant=bool(d_stat > crit),
     )
 
 

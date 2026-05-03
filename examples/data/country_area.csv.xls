@@ -1,0 +1,264 @@
+country,country_area_km2,MSD_area
+Russia,17098246.0,1
+Antarctica,14200000.0,1
+Canada[Note 3],9984670.0,9
+China,9596961.0,9
+United State,9525067.0,9
+Brazil,8515767.0,8
+Australia,7692024.0,7
+India,3287263.0,3
+Argentina,2780400.0,2
+Kazakhstan,2724900.0,2
+Algeria,2381741.0,2
+DR Congo,2344858.0,2
+Kingdom of Denmark,2220093.0,2
+Greenland (Denmark),2166086.0,2
+Saudi Arabia,2149690.0,2
+Mexico,1964375.0,1
+Indonesia,1904569.0,1
+Sudan,1861484.0,1
+Libya,1759540.0,1
+Iran,1648195.0,1
+Mongolia,1564110.0,1
+Peru,1285216.0,1
+Chad,1284000.0,1
+Niger,1267000.0,1
+Angola,1246700.0,1
+Mali,1240192.0,1
+South Africa,1221037.0,1
+Colombia,1141748.0,1
+Ethiopia,1104300.0,1
+Bolivia,1098581.0,1
+Mauritania,1030700.0,1
+Egypt,1002450.0,1
+Tanzania,945087.0,9
+Nigeria,923768.0,9
+Venezuela,916445.0,9
+Pakistan,881913.0,8
+Namibia,825615.0,8
+Mozambique,801590.0,8
+Turkey,783562.0,7
+Chile,756102.0,7
+Zambia,752612.0,7
+Myanmar,676578.0,6
+Afghanistan,652864.0,6
+South Sudan,644329.0,6
+France,640679.0,6
+Somalia,637657.0,6
+Central African Republic,622984.0,6
+Ukraine,603500.0,6
+Madagascar,587041.0,5
+Botswana,581730.0,5
+Kenya,580367.0,5
+Yemen,555000.0,5
+France (metropolitan),543940.0,5
+Thailand,513120.0,5
+Spain,505992.0,5
+Turkmenistan,488100.0,4
+Cameroon,475442.0,4
+Papua New Guinea,462840.0,4
+Sweden,450295.0,4
+Uzbekistan,447400.0,4
+Morocco,446550.0,4
+Iraq,438317.0,4
+Paraguay,406752.0,4
+Zimbabwe,390757.0,3
+Norway,385207.0,3
+Japan,377976.0,3
+Germany,357114.0,3
+Congo,342000.0,3
+Finland,338425.0,3
+Vietnam,331212.0,3
+Malaysia,330803.0,3
+Norway (mainland),323802.0,3
+Ivory Coast,322463.0,3
+Poland,312696.0,3
+Oman,309500.0,3
+Italy,301339.0,3
+Philippines,300000.0,3
+Ecuador,276841.0,2
+Burkina Faso,274222.0,2
+New Zealand,270467.0,2
+Gabon,267668.0,2
+Sahrawi Arab Democratic Republic,266000.0,2
+Guinea,245857.0,2
+United Kingdom,242495.0,2
+Uganda,241550.0,2
+Ghana,238533.0,2
+Romania,238397.0,2
+Laos,236800.0,2
+Guyana,214969.0,2
+Belarus,207600.0,2
+Kyrgyzstan,199951.0,1
+Senegal,196722.0,1
+Syria,185180.0,1
+Cambodia,181035.0,1
+Uruguay,176215.0,1
+Somaliland,176120.0,1
+Suriname,163820.0,1
+Tunisia,163610.0,1
+Bangladesh,148460.0,1
+Nepal,147181.0,1
+Tajikistan,143100.0,1
+Greece,131957.0,1
+Nicaragua,130373.0,1
+North Korea,120540.0,1
+Malawi,118484.0,1
+Eritrea,117600.0,1
+Benin,114763.0,1
+Honduras,112492.0,1
+Liberia,111369.0,1
+Bulgaria,111002.0,1
+Cuba,109884.0,1
+Guatemala,108889.0,1
+Iceland,103000.0,1
+South Korea,100210.0,1
+Hungary,93028.0,9
+Portugal,92226.0,9
+Jordan,89342.0,8
+Serbia,88361.0,8
+Azerbaijan,86600.0,8
+Austria,83871.0,8
+United Arab Emirates,83600.0,8
+Czech Republic,78871.0,7
+Panama,75417.0,7
+Sierra Leone,71740.0,7
+Ireland,70273.0,7
+Georgia,69700.0,6
+Sri Lanka,65610.0,6
+Lithuania,65300.0,6
+Latvia,64559.0,6
+Svalbard (Norway),62045.0,6
+Togo,56785.0,5
+Croatia,56594.0,5
+Bosnia and Herzegovina,51209.0,5
+Costa Rica,51100.0,5
+Slovakia,49037.0,4
+Dominican Republic,48671.0,4
+Estonia,45227.0,4
+Denmark,43094.0,4
+Netherlands,41850.0,4
+Switzerland,41284.0,4
+Bhutan,38394.0,3
+Taiwan,36193.0,3
+Guinea-Bissau,36125.0,3
+Moldova,33846.0,3
+Belgium,30528.0,3
+Lesotho,30355.0,3
+Armenia,29743.0,2
+Solomon Islands,28896.0,2
+Albania,28748.0,2
+Equatorial Guinea,28051.0,2
+Burundi,27834.0,2
+Haiti,27750.0,2
+Rwanda,26338.0,2
+North Macedonia,25713.0,2
+Djibouti,23200.0,2
+Belize,22966.0,2
+El Salvador,21041.0,2
+Israel,20770.0,2
+Slovenia,20273.0,2
+New Caledonia (France),18575.0,1
+Fiji,18272.0,1
+Kuwait,17818.0,1
+Eswatini,17364.0,1
+East Timor,14919.0,1
+Bahamas,13943.0,1
+Montenegro,13812.0,1
+Vanuatu,12189.0,1
+Falkland Islands (United Kingdom),12173.0,1
+Qatar,11586.0,1
+Gambia,11295.0,1
+Jamaica,10991.0,1
+Kosovo,10887.0,1
+Lebanon,10452.0,1
+Cyprus,9251.0,9
+Puerto Rico (United States),9104.0,9
+Abkhazia,8660.0,8
+French Southern Territories (France),7747.0,7
+United States Minor Outlying Islands,6959.41,6
+Palestine,6020.0,6
+Brunei,5765.0,5
+Trinidad and Tobago,5130.0,5
+French Polynesia (France),4167.0,4
+Transnistria,4163.0,4
+Cape Verde,4033.0,4
+South Georgia and the South Sandwich Islands (United Kingdom),3903.0,3
+South Ossetia,3900.0,3
+Northern Cyprus,3355.0,3
+Artsakh,3170.0,3
+Samoa,2842.0,2
+Hong Kong (China),2755.0,2
+Luxembourg,2586.0,2
+Bir Tawil (terra nullius),2060.0,2
+Mauritius,2040.0,2
+Comoros,1862.0,1
+Åland (Finland),1580.0,1
+Faroe Islands (Denmark),1393.0,1
+São Tomé and Príncipe,964.0,9
+Turks and Caicos Islands (United Kingdom),948.0,9
+Kiribati,811.0,8
+Bahrain,785.0,7
+Dominica,751.0,7
+Tonga,747.0,7
+Singapore,728.0,7
+Micronesia,702.0,7
+Saint Lucia,616.0,6
+Isle of Man (British Crown dependency),572.0,5
+Guam (United States),549.0,5
+Andorra,468.0,4
+Northern Mariana Islands (United States),464.0,4
+Palau,459.0,4
+Seychelles,452.0,4
+Curaçao (Netherlands),444.0,4
+Antigua and Barbuda,442.0,4
+Barbados,430.0,4
+Heard Island and McDonald Islands (Australia),412.0,4
+Saint Vincent and the Grenadines,389.0,3
+Jan Mayen (Norway),377.0,3
+U.S. Virgin Islands (United States),347.0,3
+Grenada,344.0,3
+Malta,316.0,3
+"Saint Helena, Ascension and Tristan da Cunha (United Kingdom)",308.0,3
+Maldives,300.0,3
+Bonaire (Netherlands),294.0,2
+Cayman Islands (United Kingdom),264.0,2
+Saint Kitts and Nevis,261.0,2
+Niue (New Zealand),260.0,2
+Akrotiri and Dhekelia (United Kingdom),253.8,2
+Saint Pierre and Miquelon (France),242.0,2
+Cook Islands (New Zealand),236.0,2
+American Samoa (United States),199.0,1
+Marshall Islands,181.0,1
+Aruba (Netherlands),180.0,1
+Liechtenstein,160.0,1
+British Virgin Islands (United Kingdom),151.0,1
+Wallis and Futuna (France),142.0,1
+Christmas Island (Australia),135.0,1
+Jersey (British Crown dependency),116.0,1
+Montserrat (United Kingdom),102.0,1
+Anguilla (United Kingdom),91.0,9
+Guernsey (British Crown dependency),78.0,7
+San Marino,61.0,6
+British Indian Ocean Territory (United Kingdom),60.0,6
+Saint Martin (France),54.0,5
+Bermuda (United Kingdom),54.0,5
+Bouvet Island (Norway),49.0,4
+Pitcairn Islands (United Kingdom),47.0,4
+Norfolk Island (Australia),36.0,3
+Sint Maarten (Netherlands),34.0,3
+Macau (China),31.3,3
+Tuvalu,26.0,2
+Nauru,21.0,2
+Saint Barthélemy (France),21.0,2
+Sint Eustatius (Netherlands),21.0,2
+Cocos (Keeling) Islands (Australia),14.0,1
+Saba (Netherlands),13.0,1
+Tokelau (New Zealand),12.0,1
+Gibraltar (United Kingdom),6.0,6
+Clipperton Island (France),6.0,6
+Ashmore and Cartier Islands (Australia),5.0,5
+Spratly Islands (disputed),5.0,5
+Coral Sea Islands (Australia),3.0,3
+Monaco,2.02,2
+Vatican City,0.49,0

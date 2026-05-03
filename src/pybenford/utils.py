@@ -441,6 +441,31 @@ class DuplicationResult:
     total_unique: int
     total_records: int
 
+    def __str__(self) -> str:
+        w = 55
+        border = "=" * w
+        lines: list[str] = [border, "  Number Duplication Test", border]
+        lines.append(
+            f" Total Records: {self.total_records:,}"
+            f"  |  Unique Values: {self.total_unique:,}"
+        )
+        lines.append("")
+
+        if len(self.counts) > 0 and int(self.counts[0]) > 1:
+            lines.append(" Top Duplicated Values:")
+            lines.append("  Value       Count   First-Two")
+            for i in range(len(self.values)):
+                lines.append(
+                    f"  {self.values[i]:>10,.0f}"
+                    f"    {self.counts[i]:>7,}"
+                    f"    {int(self.first_two_digits[i]):>9}"
+                )
+        else:
+            lines.append(" No duplicated values found.")
+
+        lines.append(border)
+        return "\n".join(lines)
+
 
 def number_duplication(
     data: ArrayLike,

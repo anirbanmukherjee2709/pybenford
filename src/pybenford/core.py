@@ -76,6 +76,28 @@ __all__ = [
 # ---------------------------------------------------------------------------
 
 
+_TEST_NAME_MAP: dict[str, str] = {
+    "first_digit": "First Digit Test",
+    "second_digit": "Second Digit Test",
+    "third_digit": "Third Digit Test",
+    "first_two_digits": "First Two Digits Test",
+    "first_three_digits": "First Three Digits Test",
+    "last_two_digits": "Last Two Digits Test",
+    "second_order": "Second Order Test",
+    "summation": "Summation Test",
+}
+
+_MAD_CONFORMITY_MAP: dict[str, str] = {
+    "close_conformity": "Close Conformity",
+    "acceptable_conformity": "Acceptable Conformity",
+    "marginally_acceptable_conformity": "Marginally Acceptable",
+    "nonconformity": "Nonconformity",
+    "not_applicable": "N/A (no threshold defined)",
+}
+
+_WIDTH = 55
+
+
 @dataclass(frozen=True)
 class TestResult:
     """Complete result of a Benford digit test."""
@@ -98,6 +120,69 @@ class TestResult:
     n: int
     alpha: float
 
+    def __str__(self) -> str:
+        w = _WIDTH
+        border = "=" * w
+        sep = "-" * w
+        title = _TEST_NAME_MAP.get(self.test_name, self.test_name)
+        header = f"  {title}  (n={self.n:,}  alpha={self.alpha})"
+
+        lines: list[str] = [border, header, border]
+
+        if len(self.digits) <= 10:
+            lines.append(
+                " Digit   Count   Observed   Expected   Z-Score   Sig"
+            )
+            for i in range(len(self.digits)):
+                flag = "  *" if self.significant_flags[i] else ""
+                lines.append(
+                    f" {self.digits[i]:>5}{self.counts[i]:>7,}"
+                    f"   {self.observed[i] * 100:>5.2f}%"
+                    f"    {self.expected[i] * 100:>5.2f}%"
+                    f"     {self.z_scores[i]:>5.2f}{flag}"
+                )
+        else:
+            flagged_idx = [
+                i for i in range(len(self.digits)) if self.significant_flags[i]
+            ]
+            if flagged_idx:
+                lines.append(
+                    f" Flagged Digits ({len(flagged_idx)} of"
+                    f" {len(self.digits)}):"
+                )
+                lines.append(
+                    " Digit   Count   Observed   Expected   Z-Score"
+                )
+                for i in flagged_idx:
+                    lines.append(
+                        f" {self.digits[i]:>5}{self.counts[i]:>7,}"
+                        f"   {self.observed[i] * 100:>5.2f}%"
+                        f"    {self.expected[i] * 100:>5.2f}%"
+                        f"     {self.z_scores[i]:>5.2f}  *"
+                    )
+            else:
+                lines.append(
+                    f" No individual digits flagged at alpha={self.alpha}."
+                )
+
+        lines.append(sep)
+        mad_label = _MAD_CONFORMITY_MAP.get(self.mad_conformity, self.mad_conformity)
+        lines.append(f" MAD:        {self.mad:.4f} — {mad_label}")
+        chi_verdict = "Pass" if not self.chi_square_significant else "FAIL"
+        lines.append(
+            f" Chi-Square: {self.chi_square:.4f}"
+            f"  (critical: {self.chi_square_critical:.4f})"
+            f" — {chi_verdict}"
+        )
+        ks_verdict = "Pass" if not self.ks_significant else "FAIL"
+        lines.append(
+            f" KS:         {self.ks_statistic:.4f}"
+            f"  (critical: {self.ks_critical:.4f})"
+            f"  — {ks_verdict}"
+        )
+        lines.append(border)
+        return "\n".join(lines)
+
 
 @dataclass(frozen=True)
 class SummationResult:
@@ -116,6 +201,50 @@ class SummationResult:
     grand_sum: float
     n: int
     alpha: float
+
+    def __str__(self) -> str:
+        w = _WIDTH
+        border = "=" * w
+        sep = "-" * w
+        title = _TEST_NAME_MAP.get(self.test_name, self.test_name)
+        header = f"  {title}  (n={self.n:,}  alpha={self.alpha})"
+
+        lines: list[str] = [border, header, border]
+        lines.append(f" Grand Sum: {self.grand_sum:,.0f}")
+        lines.append("")
+
+        flagged_idx = [
+            i for i in range(len(self.digits)) if self.significant_flags[i]
+        ]
+        if flagged_idx:
+            lines.append(
+                f" Flagged Digits ({len(flagged_idx)} of"
+                f" {len(self.digits)}):"
+            )
+            lines.append(
+                " Digit         Sum   Observed   Expected   Z-Score"
+            )
+            for i in flagged_idx:
+                lines.append(
+                    f" {self.digits[i]:>5}{self.sums[i]:>12,.0f}"
+                    f"   {self.observed[i] * 100:>5.2f}%"
+                    f"    {self.expected[i] * 100:>5.2f}%"
+                    f"     {self.z_scores[i]:>5.2f}  *"
+                )
+        else:
+            lines.append(
+                f" No individual digits flagged at alpha={self.alpha}."
+            )
+
+        lines.append(sep)
+        chi_verdict = "Pass" if not self.chi_square_significant else "FAIL"
+        lines.append(
+            f" Chi-Square: {self.chi_square:.4f}"
+            f"  (critical: {self.chi_square_critical:.4f})"
+            f" — {chi_verdict}"
+        )
+        lines.append(border)
+        return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
@@ -212,10 +341,10 @@ class BenfordAnalysis:
             significant_flags=np.asarray(sig, dtype=np.bool_),
             chi_square=chi.statistic,
             chi_square_critical=chi.critical_value,
-            chi_square_significant=chi.significant,
+            chi_square_significant=bool(chi.significant),
             ks_statistic=ks.statistic,
             ks_critical=ks.critical_value,
-            ks_significant=ks.significant,
+            ks_significant=bool(ks.significant),
             mad=mad_val,
             mad_conformity=mad_conf,
             n=n,
@@ -356,7 +485,7 @@ class BenfordAnalysis:
             significant_flags=np.asarray(sig, dtype=np.bool_),
             chi_square=chi_sq,
             chi_square_critical=chi_crit,
-            chi_square_significant=chi_sq > chi_crit,
+            chi_square_significant=bool(chi_sq > chi_crit),
             grand_sum=sf.grand_sum,
             n=self.n,
             alpha=alpha,
