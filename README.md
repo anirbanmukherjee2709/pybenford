@@ -106,6 +106,11 @@ result.alpha                   # significance level used
 result.test_name               # e.g. "First Digit Test"
 ```
 
+## Demo Notebook
+
+A complete walkthrough of every test and visualization is available in [`examples/demo.ipynb`](examples/demo.ipynb). It runs against US Census county population data and shows the output of all 11 tests, 6 plot functions, and programmatic result access.
+
+
 ## Data Preparation
 
 ```python
