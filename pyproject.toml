@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pybenford"
-version = "0.1.0"
+version = "0.1.1"
 description = "Professional-grade Benford's Law analysis toolkit for forensic accounting, auditing, and fraud detection"
 readme = "README.md"
 license = {text = "MIT"}
