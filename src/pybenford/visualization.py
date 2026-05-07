@@ -232,7 +232,7 @@ def plot_summation(
 
 def plot_mantissa_arc(
     result: MantissaArcResult,
-    data: NDArray[np.float64],
+    data: NDArray[np.float64] | None = None,
     *,
     title: str | None = None,
     figsize: tuple[float, float] = (8, 8),
@@ -245,7 +245,9 @@ def plot_mantissa_arc(
     result
         A :class:`~pybenford.statistics.MantissaArcResult`.
     data
-        The cleaned numeric array (``ba.clean_data``).
+        Deprecated.  Previously required to supply the cleaned numeric
+        array.  Mantissas are now read from *result.mantissas*.  Passing
+        *data* still works but emits a ``DeprecationWarning``.
     title
         Plot title.
     figsize
@@ -257,12 +259,24 @@ def plot_mantissa_arc(
     -------
     (Figure, Axes)
     """
+    import warnings
+
+    if data is not None:
+        warnings.warn(
+            "Passing 'data' to plot_mantissa_arc() is deprecated. "
+            "Mantissas are now stored on MantissaArcResult.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        abs_data = np.abs(data.astype(np.float64))
+        valid = np.isfinite(abs_data) & (abs_data > 0.0)
+        log_v = np.log10(abs_data[valid])
+        mantissas = log_v - np.floor(log_v)
+    else:
+        mantissas = result.mantissas
+
     fig, ax_ = _setup_axes(ax, figsize)
 
-    abs_data = np.abs(data.astype(np.float64))
-    valid = np.isfinite(abs_data) & (abs_data > 0.0)
-    log_v = np.log10(abs_data[valid])
-    mantissas = log_v - np.floor(log_v)
     angles = 2.0 * np.pi * mantissas
     px = np.cos(angles)
     py = np.sin(angles)
@@ -304,7 +318,7 @@ def plot_mantissa_arc(
 
 
 def plot_ordered_mantissas(
-    data: NDArray[np.float64],
+    result_or_data: MantissaArcResult | NDArray[np.float64],
     *,
     title: str | None = None,
     figsize: tuple[float, float] = (10, 8),
@@ -314,8 +328,9 @@ def plot_ordered_mantissas(
 
     Parameters
     ----------
-    data
-        The cleaned numeric array (``ba.clean_data``).
+    result_or_data
+        A :class:`~pybenford.statistics.MantissaArcResult` (preferred),
+        or a raw numeric array (deprecated).
     title
         Plot title.
     figsize
@@ -327,13 +342,25 @@ def plot_ordered_mantissas(
     -------
     (Figure, Axes)
     """
+    import warnings
+
+    if isinstance(result_or_data, MantissaArcResult):
+        mantissas = np.sort(result_or_data.mantissas)
+    else:
+        warnings.warn(
+            "Passing a raw array to plot_ordered_mantissas() is deprecated. "
+            "Pass a MantissaArcResult instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        abs_data = np.abs(result_or_data.astype(np.float64))
+        valid = np.isfinite(abs_data) & (abs_data > 0.0)
+        log_v = np.log10(abs_data[valid])
+        mantissas = np.sort(log_v - np.floor(log_v))
+
     fig, ax_ = _setup_axes(ax, figsize)
     _clean_spines(ax_)
 
-    abs_data = np.abs(data.astype(np.float64))
-    valid = np.isfinite(abs_data) & (abs_data > 0.0)
-    log_v = np.log10(abs_data[valid])
-    mantissas = np.sort(log_v - np.floor(log_v))
     n = len(mantissas)
     ranks = np.arange(1, n + 1)
 

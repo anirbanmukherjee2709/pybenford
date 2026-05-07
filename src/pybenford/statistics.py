@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 
 import numpy as np
@@ -144,6 +144,9 @@ class MantissaArcResult:
     mean_y: float
     L2: float
     p_value: float
+    mantissas: npt.NDArray[np.float64] = field(
+        default_factory=lambda: np.empty(0, dtype=np.float64)
+    )
 
     def __str__(self) -> str:
         import math
@@ -551,4 +554,5 @@ def mantissa_arc_test(
         mean_y=mean_y,
         L2=l2,
         p_value=p_value,
+        mantissas=m,
     )

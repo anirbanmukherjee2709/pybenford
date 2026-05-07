@@ -138,7 +138,7 @@ fig, ax = plot_digit_test(result, show_confidence=True)
 fig.savefig("first_two_digits.png", dpi=150)
 
 arc = analysis.mantissa_arc()
-fig, ax = plot_mantissa_arc(arc, analysis.clean_data)
+fig, ax = plot_mantissa_arc(arc)
 
 from pybenford.visualization import plot_z_scores
 fig, ax = plot_z_scores(result, critical_value=1.96)

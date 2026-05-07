@@ -115,24 +115,30 @@ class TestPlotSummation:
 
 class TestPlotMantissaArc:
     def test_returns_fig_ax(self, ba: BenfordAnalysis) -> None:
-        fig, ax = plot_mantissa_arc(ba.mantissa_arc(), ba.clean_data)
+        fig, ax = plot_mantissa_arc(ba.mantissa_arc())
         assert isinstance(fig, Figure)
         assert isinstance(ax, Axes)
 
     def test_custom_title(self, ba: BenfordAnalysis) -> None:
-        _fig, ax = plot_mantissa_arc(ba.mantissa_arc(), ba.clean_data, title="Arc")
+        _fig, ax = plot_mantissa_arc(ba.mantissa_arc(), title="Arc")
         assert ax.get_title() == "Arc"
 
     def test_existing_ax(self, ba: BenfordAnalysis) -> None:
         _, host_ax = plt.subplots()
-        _fig, ax = plot_mantissa_arc(ba.mantissa_arc(), ba.clean_data, ax=host_ax)
+        _fig, ax = plot_mantissa_arc(ba.mantissa_arc(), ax=host_ax)
         assert ax is host_ax
 
     def test_save_to_file(self, ba: BenfordAnalysis, tmp_path: Path) -> None:
-        fig, _ = plot_mantissa_arc(ba.mantissa_arc(), ba.clean_data)
+        fig, _ = plot_mantissa_arc(ba.mantissa_arc())
         path = tmp_path / "arc.png"
         fig.savefig(path)
         assert path.stat().st_size > 0
+
+    def test_deprecated_data_arg(self, ba: BenfordAnalysis) -> None:
+        with pytest.warns(DeprecationWarning, match="Passing 'data'"):
+            fig, ax = plot_mantissa_arc(ba.mantissa_arc(), ba.clean_data)
+        assert isinstance(fig, Figure)
+        assert isinstance(ax, Axes)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -142,24 +148,30 @@ class TestPlotMantissaArc:
 
 class TestPlotOrderedMantissas:
     def test_returns_fig_ax(self, ba: BenfordAnalysis) -> None:
-        fig, ax = plot_ordered_mantissas(ba.clean_data)
+        fig, ax = plot_ordered_mantissas(ba.mantissa_arc())
         assert isinstance(fig, Figure)
         assert isinstance(ax, Axes)
 
     def test_custom_title(self, ba: BenfordAnalysis) -> None:
-        _fig, ax = plot_ordered_mantissas(ba.clean_data, title="Mantissas")
+        _fig, ax = plot_ordered_mantissas(ba.mantissa_arc(), title="Mantissas")
         assert ax.get_title() == "Mantissas"
 
     def test_existing_ax(self, ba: BenfordAnalysis) -> None:
         _, host_ax = plt.subplots()
-        _fig, ax = plot_ordered_mantissas(ba.clean_data, ax=host_ax)
+        _fig, ax = plot_ordered_mantissas(ba.mantissa_arc(), ax=host_ax)
         assert ax is host_ax
 
     def test_save_to_file(self, ba: BenfordAnalysis, tmp_path: Path) -> None:
-        fig, _ = plot_ordered_mantissas(ba.clean_data)
+        fig, _ = plot_ordered_mantissas(ba.mantissa_arc())
         path = tmp_path / "mantissas.png"
         fig.savefig(path)
         assert path.stat().st_size > 0
+
+    def test_deprecated_raw_array(self, ba: BenfordAnalysis) -> None:
+        with pytest.warns(DeprecationWarning, match="raw array"):
+            fig, ax = plot_ordered_mantissas(ba.clean_data)
+        assert isinstance(fig, Figure)
+        assert isinstance(ax, Axes)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -226,8 +238,8 @@ class TestNoShow:
         with patch.object(plt, "show") as mock_show:
             plot_digit_test(ba.first_digit())
             plot_summation(ba.summation())
-            plot_mantissa_arc(ba.mantissa_arc(), ba.clean_data)
-            plot_ordered_mantissas(ba.clean_data)
+            plot_mantissa_arc(ba.mantissa_arc())
+            plot_ordered_mantissas(ba.mantissa_arc())
             plot_z_scores(ba.first_digit())
             plot_distortion_factor(ba.distortion_factor())
             mock_show.assert_not_called()
