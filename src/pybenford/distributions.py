@@ -163,7 +163,8 @@ def second_digit_distribution() -> NDArray[np.float64]:
     """
     d1 = np.arange(1, 10, dtype=np.float64).reshape(9, 1)
     d2 = np.arange(0, 10, dtype=np.float64).reshape(1, 10)
-    return np.log10(1.0 + 1.0 / (10.0 * d1 + d2)).sum(axis=0)
+    result: NDArray[np.float64] = np.log10(1.0 + 1.0 / (10.0 * d1 + d2)).sum(axis=0)
+    return result
 
 
 def third_digit_distribution() -> NDArray[np.float64]:
@@ -193,7 +194,10 @@ def third_digit_distribution() -> NDArray[np.float64]:
     d1 = np.arange(1, 10, dtype=np.float64).reshape(9, 1, 1)
     d2 = np.arange(0, 10, dtype=np.float64).reshape(1, 10, 1)
     d3 = np.arange(0, 10, dtype=np.float64).reshape(1, 1, 10)
-    return np.log10(1.0 + 1.0 / (100.0 * d1 + 10.0 * d2 + d3)).sum(axis=(0, 1))
+    result: NDArray[np.float64] = np.log10(1.0 + 1.0 / (100.0 * d1 + 10.0 * d2 + d3)).sum(
+        axis=(0, 1)
+    )
+    return result
 
 
 def first_two_digits_distribution() -> NDArray[np.float64]:

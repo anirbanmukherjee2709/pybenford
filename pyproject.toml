@@ -8,7 +8,7 @@ version = "0.1.2"
 description = "Professional-grade Benford's Law analysis toolkit for forensic accounting, auditing, and fraud detection"
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
     {name = "Anirban Mukherjee", email = "anirbanmukherjee2709@gmail.com"},
 ]
@@ -23,7 +23,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -40,10 +39,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-    "ruff>=0.4.0",
-    "mypy>=1.0",
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
+    "ruff==0.15.21",
+    "mypy==2.2.0",
+    "scipy-stubs==1.15.3.0",
+    "optype==0.9.3",
     "pre-commit>=3.0",
     "build>=1.0",
     "twine>=5.0",
@@ -59,12 +60,12 @@ Issues = "https://github.com/anirbanmukherjee2709/pybenford/issues"
 packages = ["src/pybenford"]
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py310"
 line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "RUF"]
-ignore = ["E501"]
+ignore = ["E501", "RUF002", "RUF003"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["pybenford"]
@@ -72,10 +73,8 @@ known-first-party = ["pybenford"]
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::pytest.PytestCollectionWarning"]
 testpaths = ["tests"]
-addopts = "--cov=pybenford --cov-report=term-missing --strict-markers"
+addopts = "--cov=pybenford --cov-report=term-missing --cov-fail-under=99 --strict-markers"
 
 [tool.mypy]
-python_version = "3.9"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
+python_version = "3.10"
+strict = true

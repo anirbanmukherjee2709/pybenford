@@ -15,9 +15,7 @@ from pybenford.statistics import (
     ChiSquareResult,
     ConformityLevel,
     DigitTest,
-    DistortionResult,
     KSResult,
-    MADResult,
     MantissaArcResult,
     chi_square_test,
     distortion_factor_test,
@@ -29,7 +27,6 @@ from pybenford.statistics import (
     z_significant,
     z_statistic,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

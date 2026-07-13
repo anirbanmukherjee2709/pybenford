@@ -5,8 +5,8 @@ Professional-grade Benford's Law analysis toolkit for forensic accounting, audit
 [![PyPI version](https://img.shields.io/pypi/v/pybenford)](https://pypi.org/project/pybenford/)
 [![Python versions](https://img.shields.io/pypi/pyversions/pybenford)](https://pypi.org/project/pybenford/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-210%20passing-brightgreen)]()
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
+[![Tests](https://img.shields.io/badge/tests-212%20passing-brightgreen)]()
+[![Coverage](https://img.shields.io/badge/coverage-99%25-brightgreen)]()
 
 ## Why pybenford?
 

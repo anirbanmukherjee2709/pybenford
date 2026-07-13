@@ -53,9 +53,9 @@ def to_numeric_array(data: object) -> NDArray[np.float64]:
     elif isinstance(data, (list, tuple)):
         arr = np.asarray(data, dtype=np.float64)
     elif hasattr(data, "to_numpy"):
-        arr = np.asarray(data.to_numpy(), dtype=np.float64)  # type: ignore[union-attr]
+        arr = np.asarray(data.to_numpy(), dtype=np.float64)
     elif hasattr(data, "to_list"):
-        arr = np.asarray(data.to_list(), dtype=np.float64)  # type: ignore[union-attr]
+        arr = np.asarray(data.to_list(), dtype=np.float64)
     else:
         raise TypeError(
             f"unsupported type {type(data).__name__}; "

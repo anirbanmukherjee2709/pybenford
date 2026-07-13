@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import numpy as np
-import pytest
 
 from pybenford.core import SummationResult, TestResult
 from pybenford.statistics import DistortionResult, MantissaArcResult
 from pybenford.utils import DuplicationResult
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -99,21 +97,20 @@ class TestTestResultStr:
     def test_full_table_ks_pass(self):
         r = _make_test_result(ks_significant=False)
         lines = str(r).split("\n")
-        ks_line = [l for l in lines if "KS:" in l][0]
+        ks_line = next(line for line in lines if "KS:" in line)
         assert "Pass" in ks_line
 
     def test_full_table_ks_fail(self):
         r = _make_test_result(ks_significant=True)
         lines = str(r).split("\n")
-        ks_line = [l for l in lines if "KS:" in l][0]
+        ks_line = next(line for line in lines if "KS:" in line)
         assert "FAIL" in ks_line
 
     def test_flagged_digit_star(self):
         r = _make_test_result(flagged=[0, 2])
         s = str(r)
         lines = s.split("\n")
-        digit_lines = [l for l in lines if l.strip().startswith("1") or l.strip().startswith("3")]
-        starred = [l for l in lines if "*" in l]
+        starred = [line for line in lines if "*" in line]
         assert len(starred) == 2
 
     def test_many_digits_flagged_only(self):

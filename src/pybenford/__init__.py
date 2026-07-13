@@ -5,14 +5,6 @@ from pybenford.core import (
     SummationResult,
     TestResult,
 )
-from pybenford.visualization import (
-    plot_digit_test,
-    plot_distortion_factor,
-    plot_mantissa_arc,
-    plot_ordered_mantissas,
-    plot_summation,
-    plot_z_scores,
-)
 from pybenford.utils import (
     CleaningReport,
     DataProfile,
@@ -28,27 +20,35 @@ from pybenford.utils import (
     summation_by_digits,
     to_numeric_array,
 )
+from pybenford.visualization import (
+    plot_digit_test,
+    plot_distortion_factor,
+    plot_mantissa_arc,
+    plot_ordered_mantissas,
+    plot_summation,
+    plot_z_scores,
+)
 
 __all__ = [
     "BenfordAnalysis",
-    "SummationResult",
-    "TestResult",
-    "plot_digit_test",
-    "plot_distortion_factor",
-    "plot_mantissa_arc",
-    "plot_ordered_mantissas",
-    "plot_summation",
-    "plot_z_scores",
     "CleaningReport",
     "DataProfile",
     "DigitFrequencies",
     "DuplicationResult",
     "Stratum",
     "SummationFrequencies",
+    "SummationResult",
+    "TestResult",
     "clean_numeric_array",
     "data_profile",
     "digit_counts",
     "number_duplication",
+    "plot_digit_test",
+    "plot_distortion_factor",
+    "plot_mantissa_arc",
+    "plot_ordered_mantissas",
+    "plot_summation",
+    "plot_z_scores",
     "second_order_differences",
     "summation_by_digits",
     "to_numeric_array",
