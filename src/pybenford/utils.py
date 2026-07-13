@@ -259,20 +259,14 @@ def data_profile(
     else:
         strata.append(_make_stratum("Large positive", large_pos, total))
 
-    strata.append(
-        _make_stratum("Small positive", valid[(valid > 0) & (valid < threshold)], total)
-    )
+    strata.append(_make_stratum("Small positive", valid[(valid > 0) & (valid < threshold)], total))
     strata.append(_make_stratum("Zero", valid[valid == 0.0], total))
-    strata.append(
-        _make_stratum("Small negative", valid[(valid < 0) & (valid > -threshold)], total)
-    )
+    strata.append(_make_stratum("Small negative", valid[(valid < 0) & (valid > -threshold)], total))
     strata.append(_make_stratum("Large negative", valid[valid <= -threshold], total))
 
     if invalid_count > 0:
         pct = invalid_count / total * 100.0 if total > 0 else 0.0
-        strata.append(
-            Stratum(name="Invalid", count=invalid_count, total_sum=0.0, percentage=pct)
-        )
+        strata.append(Stratum(name="Invalid", count=invalid_count, total_sum=0.0, percentage=pct))
 
     return DataProfile(
         total_count=total,
@@ -446,8 +440,7 @@ class DuplicationResult:
         border = "=" * w
         lines: list[str] = [border, "  Number Duplication Test", border]
         lines.append(
-            f" Total Records: {self.total_records:,}"
-            f"  |  Unique Values: {self.total_unique:,}"
+            f" Total Records: {self.total_records:,}  |  Unique Values: {self.total_unique:,}"
         )
         lines.append("")
 

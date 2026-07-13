@@ -78,9 +78,7 @@ class TestKnownGoodBenford:
         assert not result.significant
 
     def test_ssd_zero(self, benford_first: np.ndarray) -> None:
-        assert sum_squared_differences(benford_first, benford_first) == pytest.approx(
-            0.0
-        )
+        assert sum_squared_differences(benford_first, benford_first) == pytest.approx(0.0)
 
 
 # ---------------------------------------------------------------------------
@@ -368,9 +366,7 @@ class TestKSTest:
         result = ks_test(benford_first, benford_first, 1000)
         assert isinstance(result, KSResult)
 
-    def test_critical_value_decreases_with_n(
-        self, benford_first: np.ndarray
-    ) -> None:
+    def test_critical_value_decreases_with_n(self, benford_first: np.ndarray) -> None:
         r1 = ks_test(benford_first, benford_first, 100)
         r2 = ks_test(benford_first, benford_first, 10_000)
         assert r2.critical_value < r1.critical_value

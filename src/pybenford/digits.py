@@ -70,7 +70,7 @@ def _significand(values: ArrayLike) -> NDArray[np.float64]:
     log_v = np.log10(v)
     order = np.floor(log_v)
     with np.errstate(divide="ignore"):
-        m = v / (10.0 ** order)
+        m = v / (10.0**order)
     # For subnormal floats, 10**order underflows to 0 and m becomes inf.
     # Recompute those via the log fractional part which avoids the underflow.
     inf_mask = np.isinf(m)

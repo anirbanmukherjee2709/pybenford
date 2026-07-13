@@ -162,7 +162,12 @@ class TestCleanNumericArray:
 
     def test_report_counts_consistent(self) -> None:
         _, rpt = clean_numeric_array([1, -2, 0, np.nan, 5, np.inf, -0.5, 3])
-        removed = rpt.nan_inf_removed + rpt.zeros_removed + rpt.sign_filtered + rpt.below_threshold_removed
+        removed = (
+            rpt.nan_inf_removed
+            + rpt.zeros_removed
+            + rpt.sign_filtered
+            + rpt.below_threshold_removed
+        )
         assert rpt.original_count == rpt.clean_count + removed
 
     def test_combined_pipeline(self) -> None:

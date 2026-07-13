@@ -120,15 +120,10 @@ class DistortionResult:
         elif self.direction == "overstated":
             direction_label = " (Overstated)"
 
-        lines.append(
-            f" Distortion Factor:  {self.distortion_factor:.4f}{direction_label}"
-        )
+        lines.append(f" Distortion Factor:  {self.distortion_factor:.4f}{direction_label}")
         lines.append(f" Actual Mean:         {self.actual_mean:.4f}")
         lines.append(f" Expected Mean:       {self.expected_mean:.4f}")
-        lines.append(
-            f" Z-Statistic:         {self.z_statistic:.4f}"
-            f"  (p={self.p_value:.4f})"
-        )
+        lines.append(f" Z-Statistic:         {self.z_statistic:.4f}  (p={self.p_value:.4f})")
         sig_label = "Yes" if self.significant else "No"
         lines.append(f" Significant:         {sig_label}")
         lines.append(border)
@@ -154,15 +149,10 @@ class MantissaArcResult:
         w = 55
         border = "=" * w
         lines: list[str] = [border, "  Mantissa Arc Test", border]
-        lines.append(
-            f" Gravity Center:  ({self.mean_x:.4f}, {self.mean_y:.4f})"
-        )
+        lines.append(f" Gravity Center:  ({self.mean_x:.4f}, {self.mean_y:.4f})")
         lines.append(f" L2 Statistic:     {self.L2:.4f}")
         deg = self.mean_angle * 180.0 / math.pi
-        lines.append(
-            f" Mean Angle:        {self.mean_angle:.4f} rad"
-            f"  ({deg:.2f} deg)"
-        )
+        lines.append(f" Mean Angle:        {self.mean_angle:.4f} rad  ({deg:.2f} deg)")
         lines.append(f" P-Value:           {self.p_value:.4f}")
         lines.append(border)
         return "\n".join(lines)
@@ -183,8 +173,7 @@ def _validate_proportions(
         raise ValueError(f"n must be positive, got {n}")
     if len(observed) != len(expected):
         raise ValueError(
-            f"observed and expected must have same length, "
-            f"got {len(observed)} and {len(expected)}"
+            f"observed and expected must have same length, got {len(observed)} and {len(expected)}"
         )
     if np.any(np.asarray(observed) < 0) or np.any(np.asarray(expected) < 0):
         raise ValueError("proportions must be non-negative")
@@ -297,9 +286,7 @@ def chi_square_test(
     if n <= 0:
         raise ValueError(f"n must be positive, got {n}")
     if len(observed_counts) != len(expected_proportions):
-        raise ValueError(
-            "observed_counts and expected_proportions must have same length"
-        )
+        raise ValueError("observed_counts and expected_proportions must have same length")
 
     obs = np.asarray(observed_counts, dtype=np.float64)
     exp_prop = np.asarray(expected_proportions, dtype=np.float64)
@@ -311,9 +298,7 @@ def chi_square_test(
     expected_counts = exp_prop * n
 
     valid = expected_counts > 0
-    chi_sq = float(
-        np.sum((obs[valid] - expected_counts[valid]) ** 2 / expected_counts[valid])
-    )
+    chi_sq = float(np.sum((obs[valid] - expected_counts[valid]) ** 2 / expected_counts[valid]))
 
     dof = len(observed_counts) - 1
     p_value = float(chi2.sf(chi_sq, dof))
@@ -356,8 +341,7 @@ def ks_test(
     conf = (1.0 - alpha) * 100.0
     if conf not in CRIT_KS:
         raise ValueError(
-            f"alpha={alpha} (confidence={conf}%) not supported; "
-            f"available: {sorted(CRIT_KS.keys())}"
+            f"alpha={alpha} (confidence={conf}%) not supported; available: {sorted(CRIT_KS.keys())}"
         )
     c_alpha = CRIT_KS[conf]
     crit = c_alpha / np.sqrt(n)
@@ -392,15 +376,13 @@ def mad_test(
     """
     if len(observed) != len(expected):
         raise ValueError(
-            f"observed and expected must have same length, "
-            f"got {len(observed)} and {len(expected)}"
+            f"observed and expected must have same length, got {len(observed)} and {len(expected)}"
         )
 
     expected_bins = NUM_BINS[digit_test.value]
     if len(observed) != expected_bins:
         raise ValueError(
-            f"{digit_test.value} test expects {expected_bins} bins, "
-            f"got {len(observed)}"
+            f"{digit_test.value} test expects {expected_bins} bins, got {len(observed)}"
         )
 
     k = len(observed)
@@ -509,8 +491,7 @@ def sum_squared_differences(
     """Sum of squared differences between observed and expected proportions."""
     if len(observed) != len(expected):
         raise ValueError(
-            f"observed and expected must have same length, "
-            f"got {len(observed)} and {len(expected)}"
+            f"observed and expected must have same length, got {len(observed)} and {len(expected)}"
         )
     obs = np.asarray(observed, dtype=np.float64)
     exp = np.asarray(expected, dtype=np.float64)

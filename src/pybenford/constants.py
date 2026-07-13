@@ -422,14 +422,14 @@ near-perfect conformity. The MAD-based conformity assessment in
 # ---------------------------------------------------------------------------
 
 COLORS: Final[dict[str, str]] = {
-    "m": "#00798c",   # main / observed
-    "b": "#E2DCD8",   # background
-    "s": "#9c3848",   # secondary / expected line
+    "m": "#00798c",  # main / observed
+    "b": "#E2DCD8",  # background
+    "s": "#9c3848",  # secondary / expected line
     "af": "#edae49",  # alert fill (non-conforming digit)
     "ab": "#33658a",  # alert border
-    "h": "#d1495b",   # highlight
+    "h": "#d1495b",  # highlight
     "h2": "#f64740",  # highlight alt
-    "t": "#16DB93",   # tertiary / success
+    "t": "#16DB93",  # tertiary / success
 }
 """Hex color palette shared by every plotting utility.
 

@@ -130,9 +130,7 @@ class TestResult:
         lines: list[str] = [border, header, border]
 
         if len(self.digits) <= 10:
-            lines.append(
-                " Digit   Count   Observed   Expected   Z-Score   Sig"
-            )
+            lines.append(" Digit   Count   Observed   Expected   Z-Score   Sig")
             for i in range(len(self.digits)):
                 flag = "  *" if self.significant_flags[i] else ""
                 lines.append(
@@ -142,17 +140,10 @@ class TestResult:
                     f"     {self.z_scores[i]:>5.2f}{flag}"
                 )
         else:
-            flagged_idx = [
-                i for i in range(len(self.digits)) if self.significant_flags[i]
-            ]
+            flagged_idx = [i for i in range(len(self.digits)) if self.significant_flags[i]]
             if flagged_idx:
-                lines.append(
-                    f" Flagged Digits ({len(flagged_idx)} of"
-                    f" {len(self.digits)}):"
-                )
-                lines.append(
-                    " Digit   Count   Observed   Expected   Z-Score"
-                )
+                lines.append(f" Flagged Digits ({len(flagged_idx)} of {len(self.digits)}):")
+                lines.append(" Digit   Count   Observed   Expected   Z-Score")
                 for i in flagged_idx:
                     lines.append(
                         f" {self.digits[i]:>5}{self.counts[i]:>7,}"
@@ -161,9 +152,7 @@ class TestResult:
                         f"     {self.z_scores[i]:>5.2f}  *"
                     )
             else:
-                lines.append(
-                    f" No individual digits flagged at alpha={self.alpha}."
-                )
+                lines.append(f" No individual digits flagged at alpha={self.alpha}.")
 
         lines.append(sep)
         mad_label = _MAD_CONFORMITY_MAP.get(self.mad_conformity, self.mad_conformity)
@@ -213,17 +202,10 @@ class SummationResult:
         lines.append(f" Grand Sum: {self.grand_sum:,.0f}")
         lines.append("")
 
-        flagged_idx = [
-            i for i in range(len(self.digits)) if self.significant_flags[i]
-        ]
+        flagged_idx = [i for i in range(len(self.digits)) if self.significant_flags[i]]
         if flagged_idx:
-            lines.append(
-                f" Flagged Digits ({len(flagged_idx)} of"
-                f" {len(self.digits)}):"
-            )
-            lines.append(
-                " Digit         Sum   Observed   Expected   Z-Score"
-            )
+            lines.append(f" Flagged Digits ({len(flagged_idx)} of {len(self.digits)}):")
+            lines.append(" Digit         Sum   Observed   Expected   Z-Score")
             for i in flagged_idx:
                 lines.append(
                     f" {self.digits[i]:>5}{self.sums[i]:>12,.0f}"
@@ -232,9 +214,7 @@ class SummationResult:
                     f"     {self.z_scores[i]:>5.2f}  *"
                 )
         else:
-            lines.append(
-                f" No individual digits flagged at alpha={self.alpha}."
-            )
+            lines.append(f" No individual digits flagged at alpha={self.alpha}.")
 
         lines.append(sep)
         chi_verdict = "Pass" if not self.chi_square_significant else "FAIL"
@@ -467,10 +447,7 @@ class BenfordAnalysis:
         # summation test works with value sums, not observation counts.
         chi_sq = float(
             self.n
-            * np.sum(
-                (sf.proportions - sf.expected_proportions) ** 2
-                / sf.expected_proportions
-            )
+            * np.sum((sf.proportions - sf.expected_proportions) ** 2 / sf.expected_proportions)
         )
         dof = len(sf.proportions) - 1
         chi_crit = float(_chi2_dist.ppf(1.0 - alpha, dof))

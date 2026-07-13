@@ -123,8 +123,16 @@ def plot_digit_test(
         bar_colors[result.significant_flags] = COLORS["significant"]
 
     ax_.bar(x, obs_pct, width=bar_width, color=bar_colors, label="Observed", zorder=2)
-    ax_.plot(x, exp_pct, color=COLORS["expected"], marker="o", markersize=3, linewidth=1.5,
-             label="Expected", zorder=3)
+    ax_.plot(
+        x,
+        exp_pct,
+        color=COLORS["expected"],
+        marker="o",
+        markersize=3,
+        linewidth=1.5,
+        label="Expected",
+        zorder=3,
+    )
 
     if show_confidence:
         ep = result.expected
@@ -132,12 +140,17 @@ def plot_digit_test(
         correction = 1.0 / (2.0 * n)
         upper_pct = (ep + confidence_z * se + correction) * 100.0
         lower_pct = np.maximum(ep - confidence_z * se - correction, 0.0) * 100.0
-        ax_.fill_between(x, lower_pct, upper_pct, color=COLORS["confidence_fill"],
-                         alpha=0.15, label="95 % CI", zorder=1)
-        ax_.plot(x, upper_pct, color=COLORS["confidence_fill"], alpha=0.6,
-                 linewidth=0.7, zorder=1)
-        ax_.plot(x, lower_pct, color=COLORS["confidence_fill"], alpha=0.6,
-                 linewidth=0.7, zorder=1)
+        ax_.fill_between(
+            x,
+            lower_pct,
+            upper_pct,
+            color=COLORS["confidence_fill"],
+            alpha=0.15,
+            label="95 % CI",
+            zorder=1,
+        )
+        ax_.plot(x, upper_pct, color=COLORS["confidence_fill"], alpha=0.6, linewidth=0.7, zorder=1)
+        ax_.plot(x, lower_pct, color=COLORS["confidence_fill"], alpha=0.6, linewidth=0.7, zorder=1)
 
     ax_.set_xticks(x)
     ax_.set_xticklabels(digits, rotation=90 if many_bins else 0)
@@ -150,9 +163,16 @@ def plot_digit_test(
         f"χ²={result.chi_square:.2f} (sig={result.chi_square_significant})\n"
         f"n={result.n:,}"
     )
-    ax_.text(0.98, 0.65, info, transform=ax_.transAxes, fontsize=8,
-             verticalalignment="top", horizontalalignment="right",
-             bbox={"boxstyle": "round,pad=0.3", "facecolor": "wheat", "alpha": 0.5})
+    ax_.text(
+        0.98,
+        0.65,
+        info,
+        transform=ax_.transAxes,
+        fontsize=8,
+        verticalalignment="top",
+        horizontalalignment="right",
+        bbox={"boxstyle": "round,pad=0.3", "facecolor": "wheat", "alpha": 0.5},
+    )
 
     fig.tight_layout()
     return fig, ax_
@@ -203,8 +223,14 @@ def plot_summation(
         bar_colors[result.significant_flags] = COLORS["significant"]
 
     ax_.bar(x, obs_pct, width=0.4, color=bar_colors, label="Observed", zorder=2)
-    ax_.axhline(exp_pct, color=COLORS["expected"], linestyle="--", linewidth=1.2,
-                label=f"Expected ({exp_pct:.2f} %)", zorder=3)
+    ax_.axhline(
+        exp_pct,
+        color=COLORS["expected"],
+        linestyle="--",
+        linewidth=1.2,
+        label=f"Expected ({exp_pct:.2f} %)",
+        zorder=3,
+    )
 
     ax_.set_xticks(x)
     ax_.set_xticklabels(digits, rotation=90, fontsize=6)
@@ -212,14 +238,17 @@ def plot_summation(
     ax_.set_title(title or "Summation Test")
     ax_.legend(loc="upper right", fontsize=8, framealpha=0.8)
 
-    info = (
-        f"Grand sum={result.grand_sum:,.2f}\n"
-        f"χ²={result.chi_square:.2f}\n"
-        f"n={result.n:,}"
+    info = f"Grand sum={result.grand_sum:,.2f}\nχ²={result.chi_square:.2f}\nn={result.n:,}"
+    ax_.text(
+        0.98,
+        0.95,
+        info,
+        transform=ax_.transAxes,
+        fontsize=8,
+        verticalalignment="top",
+        horizontalalignment="right",
+        bbox={"boxstyle": "round,pad=0.3", "facecolor": "wheat", "alpha": 0.5},
     )
-    ax_.text(0.98, 0.95, info, transform=ax_.transAxes, fontsize=8,
-             verticalalignment="top", horizontalalignment="right",
-             bbox={"boxstyle": "round,pad=0.3", "facecolor": "wheat", "alpha": 0.5})
 
     fig.tight_layout()
     return fig, ax_
@@ -288,12 +317,21 @@ def plot_mantissa_arc(
     ax_.axvline(0, color=COLORS["grid"], linewidth=0.5)
 
     ax_.scatter(px, py, s=4, color=COLORS["mantissa_point"], alpha=0.4, zorder=2)
-    ax_.plot(result.mean_x, result.mean_y, "D", color=COLORS["gravity_center"],
-             markersize=10, zorder=3, label="Center of gravity")
+    ax_.plot(
+        result.mean_x,
+        result.mean_y,
+        "D",
+        color=COLORS["gravity_center"],
+        markersize=10,
+        zorder=3,
+        label="Center of gravity",
+    )
     ax_.annotate(
         f"({result.mean_x:.4f}, {result.mean_y:.4f})",
         xy=(result.mean_x, result.mean_y),
-        xytext=(10, 10), textcoords="offset points", fontsize=8,
+        xytext=(10, 10),
+        textcoords="offset points",
+        fontsize=8,
         arrowprops={"arrowstyle": "->", "color": COLORS["gravity_center"]},
     )
 
@@ -304,9 +342,16 @@ def plot_mantissa_arc(
     ax_.legend(loc="upper left", fontsize=8)
 
     info = f"L²={result.L2:.6f}\np-value={result.p_value:.4f}"
-    ax_.text(0.98, 0.05, info, transform=ax_.transAxes, fontsize=9,
-             verticalalignment="bottom", horizontalalignment="right",
-             bbox={"boxstyle": "round,pad=0.3", "facecolor": "wheat", "alpha": 0.5})
+    ax_.text(
+        0.98,
+        0.05,
+        info,
+        transform=ax_.transAxes,
+        fontsize=9,
+        verticalalignment="bottom",
+        horizontalalignment="right",
+        bbox={"boxstyle": "round,pad=0.3", "facecolor": "wheat", "alpha": 0.5},
+    )
 
     fig.tight_layout()
     return fig, ax_
@@ -365,8 +410,15 @@ def plot_ordered_mantissas(
     ranks = np.arange(1, n + 1)
 
     ax_.scatter(ranks, mantissas, s=1, color=COLORS["mantissa_point"], alpha=0.5, zorder=2)
-    ax_.plot([1, n], [0.0, 1.0], color=COLORS["expected"], linestyle="--",
-             linewidth=1.5, label="Expected (uniform)", zorder=3)
+    ax_.plot(
+        [1, n],
+        [0.0, 1.0],
+        color=COLORS["expected"],
+        linestyle="--",
+        linewidth=1.5,
+        label="Expected (uniform)",
+        zorder=3,
+    )
 
     ax_.set_xlabel("Rank")
     ax_.set_ylabel("Mantissa")
@@ -417,15 +469,20 @@ def plot_z_scores(
     x = np.arange(len(digits))
     many_bins = len(digits) >= 20
 
-    bar_colors = np.where(
-        np.abs(z) > critical_value, COLORS["significant"], COLORS["observed"]
-    )
+    bar_colors = np.where(np.abs(z) > critical_value, COLORS["significant"], COLORS["observed"])
 
     ax_.bar(x, z, width=0.5 if many_bins else 0.7, color=bar_colors, zorder=2)
-    ax_.axhline(critical_value, color=COLORS["significant"], linestyle="--",
-                linewidth=1, alpha=0.7, label=f"+/- {critical_value}")
-    ax_.axhline(-critical_value, color=COLORS["significant"], linestyle="--",
-                linewidth=1, alpha=0.7)
+    ax_.axhline(
+        critical_value,
+        color=COLORS["significant"],
+        linestyle="--",
+        linewidth=1,
+        alpha=0.7,
+        label=f"+/- {critical_value}",
+    )
+    ax_.axhline(
+        -critical_value, color=COLORS["significant"], linestyle="--", linewidth=1, alpha=0.7
+    )
 
     ax_.set_xticks(x)
     ax_.set_xticklabels(digits, rotation=90 if many_bins else 0)
@@ -480,8 +537,7 @@ def plot_distortion_factor(
     color = COLORS["significant"] if result.significant else COLORS["summation"]
     ax_.barh(0, deviation, left=em, height=0.4, color=color, alpha=0.7, zorder=2)
     ax_.axvline(em, color="black", linestyle="--", linewidth=1.2, label=f"Expected ({em:.2f})")
-    ax_.plot(am, 0, "D", color=color, markersize=12, zorder=3,
-             label=f"Actual ({am:.2f})")
+    ax_.plot(am, 0, "D", color=color, markersize=12, zorder=3, label=f"Actual ({am:.2f})")
 
     ax_.set_xlim(em - margin, em + margin)
     ax_.set_xlabel("Collapsed Mean")
@@ -493,9 +549,16 @@ def plot_distortion_factor(
         f"Z={result.z_statistic:.4f}, p={result.p_value:.4f}\n"
         f"Significant={result.significant}"
     )
-    ax_.text(0.98, 0.95, info, transform=ax_.transAxes, fontsize=9,
-             verticalalignment="top", horizontalalignment="right",
-             bbox={"boxstyle": "round,pad=0.3", "facecolor": "wheat", "alpha": 0.5})
+    ax_.text(
+        0.98,
+        0.95,
+        info,
+        transform=ax_.transAxes,
+        fontsize=9,
+        verticalalignment="top",
+        horizontalalignment="right",
+        bbox={"boxstyle": "round,pad=0.3", "facecolor": "wheat", "alpha": 0.5},
+    )
 
     fig.tight_layout()
     return fig, ax_
