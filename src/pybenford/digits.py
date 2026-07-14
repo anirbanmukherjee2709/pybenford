@@ -118,7 +118,8 @@ def extract_first_digit(values: ArrayLike) -> NDArray[np.float64]:
     >>> extract_first_digit([6340, -0.0529, 0, np.nan, 110364])
     array([ 6.,  5., nan, nan,  1.])
     """
-    return np.minimum(np.floor(_significand(values) * (1.0 + _REL_EPS)), 9.0)
+    result: NDArray[np.float64] = np.minimum(np.floor(_significand(values) * (1.0 + _REL_EPS)), 9.0)
+    return result
 
 
 def extract_second_digit(values: ArrayLike) -> NDArray[np.float64]:
@@ -133,7 +134,8 @@ def extract_second_digit(values: ArrayLike) -> NDArray[np.float64]:
     array([3., 2., 1.])
     """
     m = _significand(values)
-    return np.minimum(np.floor(m * 10.0 * (1.0 + _REL_EPS)), 99.0) % 10.0
+    result: NDArray[np.float64] = np.minimum(np.floor(m * 10.0 * (1.0 + _REL_EPS)), 99.0) % 10.0
+    return result
 
 
 def extract_third_digit(values: ArrayLike) -> NDArray[np.float64]:
@@ -152,7 +154,8 @@ def extract_third_digit(values: ArrayLike) -> NDArray[np.float64]:
     array([4., 9., 0.])
     """
     m = _significand(values)
-    return np.minimum(np.floor(m * 100.0 * (1.0 + _REL_EPS)), 999.0) % 10.0
+    result: NDArray[np.float64] = np.minimum(np.floor(m * 100.0 * (1.0 + _REL_EPS)), 999.0) % 10.0
+    return result
 
 
 def extract_first_two_digits(values: ArrayLike) -> NDArray[np.float64]:
@@ -167,7 +170,8 @@ def extract_first_two_digits(values: ArrayLike) -> NDArray[np.float64]:
     array([63., 52., 11.])
     """
     m = _significand(values)
-    return np.minimum(np.floor(m * 10.0 * (1.0 + _REL_EPS)), 99.0)
+    result: NDArray[np.float64] = np.minimum(np.floor(m * 10.0 * (1.0 + _REL_EPS)), 99.0)
+    return result
 
 
 def extract_first_three_digits(values: ArrayLike) -> NDArray[np.float64]:
@@ -182,7 +186,8 @@ def extract_first_three_digits(values: ArrayLike) -> NDArray[np.float64]:
     array([634., 529., 110.])
     """
     m = _significand(values)
-    return np.minimum(np.floor(m * 100.0 * (1.0 + _REL_EPS)), 999.0)
+    result: NDArray[np.float64] = np.minimum(np.floor(m * 100.0 * (1.0 + _REL_EPS)), 999.0)
+    return result
 
 
 def extract_last_two_digits(values: ArrayLike) -> NDArray[np.float64]:

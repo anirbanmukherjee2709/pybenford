@@ -47,7 +47,7 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: pip install numpy==1.22.0 scipy==1.8.0 matplotlib==3.5.0
       - run: pip install --no-deps -e .
-      - run: pip install pytest==9.1.1 pytest-cov==7.1.0
+      - run: pip install pytest==9.1.1 pytest-cov==7.1.0 hypothesis==6.156.6
       - run: pip check
       - run: python -c "import numpy, scipy, matplotlib; assert numpy.__version__ == '1.22.0' and scipy.__version__ == '1.8.0' and matplotlib.__version__ == '3.5.0'"
       - run: pytest -q
