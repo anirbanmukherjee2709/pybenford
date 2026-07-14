@@ -138,7 +138,12 @@ class TestTestResultStr:
 
 
 class TestSummationResultStr:
-    def _make(self, *, flagged: list[int] | None = None) -> SummationResult:
+    def _make(
+        self,
+        *,
+        flagged: list[int] | None = None,
+        chi_significant: bool = True,
+    ) -> SummationResult:
         n_digits = 90
         digits = np.arange(10, 100, dtype=np.int64)
         sums = np.full(n_digits, 1000.0, dtype=np.float64)
@@ -157,9 +162,9 @@ class TestSummationResultStr:
             expected=exp,
             z_scores=z,
             significant_flags=sig,
-            chi_square=200.0,
+            chi_square=200.0 if chi_significant else 90.0,
             chi_square_critical=112.0,
-            chi_square_significant=True,
+            chi_square_significant=chi_significant,
             grand_sum=90000.0,
             n=3000,
             alpha=0.05,
@@ -178,16 +183,33 @@ class TestSummationResultStr:
     def test_flagged_digits(self):
         r = self._make(flagged=[0, 5, 10])
         s = str(r)
-        assert "Flagged Digits (3 of 90):" in s
+        assert "Flagged Digits (heuristic z-scores) (3 of 90):" in s
         assert "*" in s
 
     def test_no_flagged(self):
         r = self._make()
-        assert "No individual digits flagged" in str(r)
+        assert "No digits flagged by heuristic z-scores" in str(r)
 
-    def test_chi_fail(self):
+    def test_chi_exceeds_critical(self):
         r = self._make(flagged=[0])
-        assert "FAIL" in str(r)
+        s = str(r)
+        assert "Chi-Square (heuristic):" in s
+        assert "exceeds critical" in s
+        assert "FAIL" not in s
+
+    def test_chi_within_critical(self):
+        r = self._make(flagged=[0], chi_significant=False)
+        s = str(r)
+        assert "Chi-Square (heuristic):" in s
+        assert "within critical" in s
+        assert "Pass" not in s
+
+    def test_non_significant_fixture_heuristic_wording(self):
+        r = self._make(chi_significant=False)
+        s = str(r)
+        assert "No digits flagged by heuristic z-scores at alpha=0.05." in s
+        assert "Chi-Square (heuristic):" in s
+        assert "within critical" in s
 
     def test_no_ks_or_mad(self):
         r = self._make(flagged=[0])

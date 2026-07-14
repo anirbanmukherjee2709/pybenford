@@ -260,6 +260,14 @@ class TestInputValidation:
         z = z_statistic(np.array([0.5, 0.5]), np.array([0.0, 1.0]), 100)
         assert np.isinf(z[0])
 
+    def test_z_zero_expected_zero_observed_returns_zero(self) -> None:
+        z = z_statistic(np.array([0.0]), np.array([0.0]), 100)
+        assert z[0] == 0.0
+
+    def test_z_zero_expected_positive_observed_returns_inf(self) -> None:
+        z = z_statistic(np.array([0.1]), np.array([0.0]), 100)
+        assert z[0] == np.inf
+
     def test_chi_square_sum_mismatch(self, benford_first: np.ndarray) -> None:
         counts = np.ones(9, dtype=np.int64)
         with pytest.raises(ValueError, match="must equal"):
@@ -491,3 +499,11 @@ class TestMantissaArc:
         result = mantissa_arc_test(data)
         assert result.L2 > 0.9
         assert result.p_value < 0.01
+
+    def test_mean_angle_is_gravity_center_direction(self) -> None:
+        rng = np.random.default_rng(42)
+        data = np.concatenate([10 ** rng.uniform(0.0, 0.1, 900), 10 ** rng.uniform(0.9, 1.0, 100)])
+        res = mantissa_arc_test(data)
+        assert res.mean_angle == pytest.approx(np.arctan2(res.mean_y, res.mean_x))
+        arithmetic_mean = float(np.mean(2.0 * np.pi * res.mantissas))
+        assert abs(res.mean_angle - arithmetic_mean) > 0.5

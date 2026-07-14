@@ -374,7 +374,7 @@ The test checks whether the center of mass of these points is close to the origi
 ```python
 @dataclass(frozen=True)
 class MantissaArcResult:
-    mean_angle: float          # mean of 2*pi*mantissa
+    mean_angle: float          # atan2(mean_y, mean_x) — direction of the gravity center (amended in Pass 2; original definition was the arithmetic mean)
     mean_x: float              # mean of cos(2*pi*mantissa)
     mean_y: float              # mean of sin(2*pi*mantissa)
     L2: float                  # sqrt(mean_x^2 + mean_y^2) — distance from origin

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 import pytest
 
-from pybenford.core import BenfordAnalysis, SummationResult, TestResult
+from pybenford.core import BenfordAnalysis, SmallSampleWarning, SummationResult, TestResult
 from pybenford.distributions import first_digit_distribution, first_two_digits_distribution
 from pybenford.statistics import DistortionResult, MantissaArcResult
 from pybenford.utils import DuplicationResult
@@ -317,3 +319,61 @@ class TestEdgeCases:
         ba = BenfordAnalysis(data)
         r = ba.first_digit()
         assert r.counts[0] == 5  # all start with 1
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Small-sample warnings (effective sample, Nigrini §4.2)
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+def _make_analysis(n: int) -> BenfordAnalysis:
+    """Build a BenfordAnalysis from log-uniform data of exact length n.
+
+    The constructor's own small-sample warning (n < 1000) is suppressed
+    so per-test warning assertions see only the effective-sample check.
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", SmallSampleWarning)
+        return BenfordAnalysis(_benford_data(n))
+
+
+class TestSmallSampleWarnings:
+    # For second_order the effective sample is len(data) - 1, so the
+    # 299/300 boundary needs one extra input value.
+    @pytest.mark.parametrize(
+        ("method", "warn_n", "silent_n"),
+        [
+            ("first_two_digits", 299, 300),
+            ("first_three_digits", 299, 300),
+            ("second_order", 300, 301),
+            ("summation", 299, 300),
+        ],
+    )
+    def test_effective_sample_boundary(self, method: str, warn_n: int, silent_n: int) -> None:
+        ba = _make_analysis(warn_n)
+        with pytest.warns(SmallSampleWarning):
+            getattr(ba, method)()
+
+        ba = _make_analysis(silent_n)
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", SmallSampleWarning)
+            getattr(ba, method)()
+
+    def test_constructor_warns_at_999(self) -> None:
+        with pytest.warns(SmallSampleWarning):
+            BenfordAnalysis(_benford_data(999))
+
+    def test_constructor_silent_at_1000(self) -> None:
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", SmallSampleWarning)
+            BenfordAnalysis(_benford_data(1000))
+
+    def test_second_order_warns_on_effective_sample_not_input(self) -> None:
+        # 1000 inputs pass the constructor check, but 999 ties collapse
+        # the second-order test to an effective sample of 1.
+        data = np.concatenate([np.full(999, 5000.0), np.array([1234.5])])
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", SmallSampleWarning)
+            ba = BenfordAnalysis(data)
+        with pytest.warns(SmallSampleWarning):
+            ba.second_order()

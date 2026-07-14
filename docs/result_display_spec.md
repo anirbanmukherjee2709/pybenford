@@ -156,13 +156,13 @@ Same adaptive logic as TestResult but display `Sum` instead of `Count`.
 =======================================================
  Grand Sum: 341,784,857
 
- Flagged Digits (57 of 90):
+ Flagged Digits (heuristic z-scores) (57 of 90):    (amended in Pass 2; original prescribed "Flagged Digits (57 of 90):")
  Digit         Sum   Observed   Expected   Z-Score
     10  13,528,984     3.96%      1.11%     15.15  *
     11   7,665,693     2.24%      1.11%      5.97  *
     ...
 -------------------------------------------------------
- Chi-Square: 2013.5123 (critical: 112.0220) — FAIL
+ Chi-Square (heuristic): 2013.5123 (critical: 112.0220) — exceeds critical    (amended in Pass 2; original prescribed FAIL wording)
 =======================================================
 ```
 

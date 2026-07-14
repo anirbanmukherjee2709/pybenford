@@ -14,6 +14,7 @@ Example
 
 from __future__ import annotations
 
+import warnings
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Literal
@@ -22,7 +23,11 @@ import numpy as np
 from numpy.typing import ArrayLike, NDArray
 from scipy.stats import chi2 as _chi2_dist
 
-from pybenford.constants import LAST_TWO_DIGITS_EXPECTED
+from pybenford.constants import (
+    LAST_TWO_DIGITS_EXPECTED,
+    MIN_SAMPLE_SIZE_FIRST_TWO,
+    MIN_SAMPLE_SIZE_RECOMMENDED,
+)
 from pybenford.digits import (
     extract_first_digit,
     extract_first_three_digits,
@@ -66,9 +71,14 @@ from pybenford.utils import (
 
 __all__ = [
     "BenfordAnalysis",
+    "SmallSampleWarning",
     "SummationResult",
     "TestResult",
 ]
+
+
+class SmallSampleWarning(UserWarning):
+    """Sample below Nigrini's recommended size for reliable analysis."""
 
 
 # ---------------------------------------------------------------------------
@@ -204,7 +214,9 @@ class SummationResult:
 
         flagged_idx = [i for i in range(len(self.digits)) if self.significant_flags[i]]
         if flagged_idx:
-            lines.append(f" Flagged Digits ({len(flagged_idx)} of {len(self.digits)}):")
+            lines.append(
+                f" Flagged Digits (heuristic z-scores) ({len(flagged_idx)} of {len(self.digits)}):"
+            )
             lines.append(" Digit         Sum   Observed   Expected   Z-Score")
             for i in flagged_idx:
                 lines.append(
@@ -214,12 +226,12 @@ class SummationResult:
                     f"     {self.z_scores[i]:>5.2f}  *"
                 )
         else:
-            lines.append(f" No individual digits flagged at alpha={self.alpha}.")
+            lines.append(f" No digits flagged by heuristic z-scores at alpha={self.alpha}.")
 
         lines.append(sep)
-        chi_verdict = "Pass" if not self.chi_square_significant else "FAIL"
+        chi_verdict = "exceeds critical" if self.chi_square_significant else "within critical"
         lines.append(
-            f" Chi-Square: {self.chi_square:.4f}"
+            f" Chi-Square (heuristic): {self.chi_square:.4f}"
             f"  (critical: {self.chi_square_critical:.4f})"
             f" — {chi_verdict}"
         )
@@ -278,6 +290,15 @@ class BenfordAnalysis:
         self.n: int = len(cleaned)
         self.cleaning_report: CleaningReport = report
 
+        if self.n < MIN_SAMPLE_SIZE_RECOMMENDED:
+            warnings.warn(
+                f"sample size {self.n} is below the recommended minimum of "
+                f"{MIN_SAMPLE_SIZE_RECOMMENDED} for a reliable Benford analysis "
+                "(Nigrini §4.2)",
+                SmallSampleWarning,
+                stacklevel=2,
+            )
+
     # ── private helper ─────────────────────────────────────────────────
 
     def _run_digit_test(
@@ -290,9 +311,17 @@ class BenfordAnalysis:
         expected: NDArray[np.float64],
         digit_test: DigitTest | None,
         alpha: float,
+        warn_min_n: int | None = None,
     ) -> TestResult:
         """Shared implementation for every digit-level test."""
         freq = digit_counts(data, extractor, digit_range)
+        if warn_min_n is not None and freq.total < warn_min_n:
+            warnings.warn(
+                f"{test_name} test runs on an effective sample of {freq.total}, "
+                f"below the minimum of {warn_min_n} (Nigrini §4.2)",
+                SmallSampleWarning,
+                stacklevel=3,
+            )
         n = freq.total
         obs = freq.proportions
 
@@ -379,6 +408,7 @@ class BenfordAnalysis:
             expected=first_two_digits_distribution(),
             digit_test=DigitTest.FIRST_TWO,
             alpha=alpha,
+            warn_min_n=MIN_SAMPLE_SIZE_FIRST_TWO,
         )
 
     def first_three_digits(self, *, alpha: float = 0.05) -> TestResult:
@@ -391,6 +421,7 @@ class BenfordAnalysis:
             expected=first_three_digits_distribution(),
             digit_test=DigitTest.FIRST_THREE,
             alpha=alpha,
+            warn_min_n=MIN_SAMPLE_SIZE_FIRST_TWO,
         )
 
     def last_two_digits(self, *, alpha: float = 0.05) -> TestResult:
@@ -423,6 +454,7 @@ class BenfordAnalysis:
                 expected=first_two_digits_distribution(),
                 digit_test=DigitTest.FIRST_TWO,
                 alpha=alpha,
+                warn_min_n=MIN_SAMPLE_SIZE_FIRST_TWO,
             )
         return self._run_digit_test(
             test_name="second_order",
@@ -432,19 +464,37 @@ class BenfordAnalysis:
             expected=first_three_digits_distribution(),
             digit_test=DigitTest.FIRST_THREE,
             alpha=alpha,
+            warn_min_n=MIN_SAMPLE_SIZE_FIRST_TWO,
         )
 
     # ── summation test ─────────────────────────────────────────────────
 
     def summation(self, *, alpha: float = 0.05) -> SummationResult:
-        """Summation test — sums grouped by first-two digits (Nigrini Ch. 5)."""
+        """Summation test — sums grouped by first-two digits (Nigrini Ch. 5).
+
+        The per-digit z-scores and the chi-square statistic here are
+        heuristic screens only: their variance models assume count
+        proportions, not proportions of value sums, and Nigrini provides
+        no critical values for sum shares. Interpretation should rest on
+        the summation plot and the magnitude of deviations.
+        """
         sf: SummationFrequencies = summation_by_digits(self.clean_data)
+
+        if sf.n_valid < MIN_SAMPLE_SIZE_FIRST_TWO:
+            warnings.warn(
+                f"summation test runs on an effective sample of {sf.n_valid}, "
+                f"below the minimum of {MIN_SAMPLE_SIZE_FIRST_TWO} (Nigrini §4.2)",
+                SmallSampleWarning,
+                stacklevel=2,
+            )
 
         z = z_statistic(sf.proportions, sf.expected_proportions, self.n)
         sig = z_significant(z, alpha=alpha)
 
         # Chi-square from proportions (not integer counts) because the
-        # summation test works with value sums, not observation counts.
+        # summation test works with value sums, not observation counts —
+        # a heuristic screen, since the multinomial variance model has no
+        # sampling justification for sum shares.
         chi_sq = float(
             self.n
             * np.sum((sf.proportions - sf.expected_proportions) ** 2 / sf.expected_proportions)

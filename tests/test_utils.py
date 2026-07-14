@@ -333,12 +333,12 @@ class TestSummationByDigits:
 class TestSecondOrderDifferences:
     def test_basic_sorted(self) -> None:
         result = second_order_differences([1, 2, 5])
-        # diffs = [1, 3], * 10 = [10, 30], round, abs
-        np.testing.assert_array_equal(result, [10.0, 30.0])
+        # diffs of sorted values, unscaled and unrounded
+        np.testing.assert_array_equal(result, [1.0, 3.0])
 
     def test_unsorted_data(self) -> None:
         result = second_order_differences([5, 1, 2])
-        np.testing.assert_array_equal(result, [10.0, 30.0])
+        np.testing.assert_array_equal(result, [1.0, 3.0])
 
     def test_length_is_n_minus_1(self) -> None:
         result = second_order_differences([1, 2, 3, 4, 5])
@@ -358,16 +358,50 @@ class TestSecondOrderDifferences:
 
     def test_filters_nan_inf(self) -> None:
         result = second_order_differences([1, np.nan, 2, np.inf, 5])
-        np.testing.assert_array_equal(result, [10.0, 30.0])
+        np.testing.assert_array_equal(result, [1.0, 3.0])
 
     def test_all_nan_raises(self) -> None:
         with pytest.raises(ValueError, match="at least 2"):
             second_order_differences([np.nan, np.nan])
 
-    def test_rounding(self) -> None:
-        # 1.03 and 1.07 → diff = 0.04, *10 = 0.4, round = 0.0
+    def test_no_rounding(self) -> None:
+        # 1.03 and 1.07 → diff = 0.04, kept exactly (the legacy formula
+        # rounded it to 0 and destroyed it)
         result = second_order_differences([1.03, 1.07])
-        np.testing.assert_array_equal(result, [0.0])
+        assert result[0] == pytest.approx(1.07 - 1.03)
+
+    def test_exactness_mixed_input(self) -> None:
+        data = [3.7, np.nan, 0.21, np.inf, 12.5, -np.inf, 1.0]
+        finite = np.array([3.7, 0.21, 12.5, 1.0])
+        result = second_order_differences(data)
+        np.testing.assert_array_equal(result, np.diff(np.sort(finite)))
+
+    def test_integer_data_equivalence_with_old_formula(self) -> None:
+        rng = np.random.default_rng(0)
+        x = rng.integers(1, 10**6, 2000).astype(np.float64)
+        new = second_order_differences(x)
+        old = np.abs(np.round(np.diff(np.sort(x)) * 10.0, 0))
+
+        def _first_two_counts(arr: np.ndarray) -> np.ndarray:  # type: ignore[type-arg]
+            ft = extract_first_two_digits(arr)
+            valid = ft[~np.isnan(ft)].astype(np.int64)
+            return np.bincount(valid, minlength=100)
+
+        np.testing.assert_array_equal(_first_two_counts(new), _first_two_counts(old))
+
+    def test_continuous_data_repair(self) -> None:
+        rng = np.random.default_rng(7)
+        data = np.sort(rng.uniform(0, 100, 5000))
+        result = second_order_differences(data)
+        assert np.count_nonzero(result == 0.0) == 0
+        assert np.count_nonzero(np.isnan(extract_first_two_digits(result))) == 0
+
+    def test_tie_semantics(self) -> None:
+        result = second_order_differences([1.0, 1.0, 1.04])
+        assert result == pytest.approx([0.0, 0.04])
+        ft = extract_first_two_digits(result)
+        assert np.count_nonzero(np.isnan(ft)) == 1
+        assert ft[~np.isnan(ft)].tolist() == [40.0]
 
 
 # ═══════════════════════════════════════════════════════════════════════════

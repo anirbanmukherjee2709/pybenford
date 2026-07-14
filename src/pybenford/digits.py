@@ -39,6 +39,8 @@ recover integer digits, filter with ``~np.isnan(result)`` and cast.
 
 from __future__ import annotations
 
+from typing import Final
+
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
@@ -52,6 +54,15 @@ __all__ = [
     "extract_second_digit",
     "extract_third_digit",
 ]
+
+
+# Relative boundary correction ≈ 18 ULPs at 1.0; absorbs the few-ULP drift
+# from log/divide while only misclassifying true values within 4e-15 RELATIVE
+# distance of a digit boundary — i.e. values carrying 15+ significant decimal
+# digits, which decimal-entered data does not produce (verified: 0 mismatches
+# on 500k two-decimal and 200k three-decimal currency values; 1_999_999.99,
+# 19_999_999.99, 199_999_999.99 all correct).
+_REL_EPS: Final[float] = 4e-15
 
 
 def _significand(values: ArrayLike) -> NDArray[np.float64]:
@@ -107,7 +118,7 @@ def extract_first_digit(values: ArrayLike) -> NDArray[np.float64]:
     >>> extract_first_digit([6340, -0.0529, 0, np.nan, 110364])
     array([ 6.,  5., nan, nan,  1.])
     """
-    return np.floor(_significand(values))
+    return np.minimum(np.floor(_significand(values) * (1.0 + _REL_EPS)), 9.0)
 
 
 def extract_second_digit(values: ArrayLike) -> NDArray[np.float64]:
@@ -122,7 +133,7 @@ def extract_second_digit(values: ArrayLike) -> NDArray[np.float64]:
     array([3., 2., 1.])
     """
     m = _significand(values)
-    return np.floor(m * 10.0) % 10.0
+    return np.minimum(np.floor(m * 10.0 * (1.0 + _REL_EPS)), 99.0) % 10.0
 
 
 def extract_third_digit(values: ArrayLike) -> NDArray[np.float64]:
@@ -141,7 +152,7 @@ def extract_third_digit(values: ArrayLike) -> NDArray[np.float64]:
     array([4., 9., 0.])
     """
     m = _significand(values)
-    return np.floor(m * 100.0) % 10.0
+    return np.minimum(np.floor(m * 100.0 * (1.0 + _REL_EPS)), 999.0) % 10.0
 
 
 def extract_first_two_digits(values: ArrayLike) -> NDArray[np.float64]:
@@ -156,7 +167,7 @@ def extract_first_two_digits(values: ArrayLike) -> NDArray[np.float64]:
     array([63., 52., 11.])
     """
     m = _significand(values)
-    return np.floor(m * 10.0)
+    return np.minimum(np.floor(m * 10.0 * (1.0 + _REL_EPS)), 99.0)
 
 
 def extract_first_three_digits(values: ArrayLike) -> NDArray[np.float64]:
@@ -171,7 +182,7 @@ def extract_first_three_digits(values: ArrayLike) -> NDArray[np.float64]:
     array([634., 529., 110.])
     """
     m = _significand(values)
-    return np.floor(m * 100.0)
+    return np.minimum(np.floor(m * 100.0 * (1.0 + _REL_EPS)), 999.0)
 
 
 def extract_last_two_digits(values: ArrayLike) -> NDArray[np.float64]:

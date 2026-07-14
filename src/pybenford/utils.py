@@ -352,13 +352,18 @@ class SummationFrequencies:
     proportions: NDArray[np.float64]
     expected_proportions: NDArray[np.float64]
     grand_sum: float
+    n_valid: int
 
 
 def summation_by_digits(data: ArrayLike) -> SummationFrequencies:
     """Group values by first-two digits and sum the original values.
 
     Expected proportions are uniform at ``1/90`` per bin
-    (Nigrini Ch. 5).
+    (Nigrini Ch. 5). Any z or chi-square statistic computed downstream
+    from these sum shares is a heuristic screen only: the usual
+    variance models assume count proportions, not proportions of value
+    sums, so interpretation should rest on the plot and the magnitude
+    of deviations.
 
     Raises
     ------
@@ -389,6 +394,7 @@ def summation_by_digits(data: ArrayLike) -> SummationFrequencies:
         proportions=proportions,
         expected_proportions=expected,
         grand_sum=grand_sum,
+        n_valid=len(valid_ft),
     )
 
 
@@ -398,11 +404,20 @@ def summation_by_digits(data: ArrayLike) -> SummationFrequencies:
 
 
 def second_order_differences(data: ArrayLike) -> NDArray[np.float64]:
-    """Sort, diff, scale by 10, round, and take absolute value.
+    """Sort the finite values and return their successive differences.
 
-    Matches the notebook formula ``abs(round((x * 10).diff(), 0))``.
     Returns ``N - 1`` elements where ``N`` is the number of finite
-    input values.
+    input values. Ties produce exact ``0.0`` entries, which the digit
+    extractors map to ``NaN`` and ``digit_counts`` drops.
+
+    This replaces the legacy notebook formula
+    ``abs(round(diffs * 10, 0))``: digit extraction is scale-invariant,
+    so the ``* 10`` was always a no-op, and the rounding destroyed the
+    second-order test for sub-unit spacings — on uniform data with
+    spacing ~0.02, ~91% of diffs rounded to 0 and were dropped, and the
+    surviving digits were heavily distorted. For integer-valued data
+    the digit distribution of the result is identical to the old
+    formula's.
 
     Raises
     ------
@@ -411,13 +426,9 @@ def second_order_differences(data: ArrayLike) -> NDArray[np.float64]:
     """
     arr = np.asarray(data, dtype=np.float64).ravel()
     finite = arr[np.isfinite(arr)]
-
     if len(finite) < 2:
         raise ValueError("need at least 2 finite values for second-order differences")
-
-    sorted_arr = np.sort(finite)
-    diffs = np.diff(sorted_arr)
-    return np.abs(np.round(diffs * 10.0, 0))
+    return np.diff(np.sort(finite))
 
 
 # ---------------------------------------------------------------------------

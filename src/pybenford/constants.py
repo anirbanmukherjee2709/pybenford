@@ -404,8 +404,10 @@ MIN_SAMPLE_SIZE_RECOMMENDED: Final[int] = 1000
 MIN_SAMPLE_SIZE_FIRST_TWO: Final[int] = 300
 """Minimum ``N`` below which the first-two-digits test is unreliable.
 
-With ``N < 300`` the package restricts analysis to the first-digit test
-only, per Nigrini's guidance.
+When the effective sample analyzed by the first-two-digits,
+first-three-digits, second-order, or summation test falls below 300,
+the package emits a :class:`~pybenford.core.SmallSampleWarning`, per
+Nigrini's guidance.
 """
 
 LARGE_SAMPLE_THRESHOLD: Final[int] = 25_000

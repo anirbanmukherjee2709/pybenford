@@ -221,7 +221,7 @@ def z_statistic(
 
     result: npt.NDArray[np.floating] = np.where(
         exp == 0.0,
-        np.inf,
+        np.where(obs > 0.0, np.inf, 0.0),
         np.where(denom > 0, raw, 0.0),
     )
     return result
@@ -513,6 +513,11 @@ def mantissa_arc_test(
     Nigrini warns this test is "very sensitive" -- even data that passes
     all other tests may fail this one. Consider using sqrt(N) or
     cubed root of N adjustments for large datasets.
+
+    ``mean_angle`` is the direction of the gravity center in radians,
+    in [-π, π] (the raw ``np.arctan2`` range — ``arctan2(-0.0, -1.0)``
+    returns -π); unstable and of no diagnostic value when the gravity
+    center is at or near the origin (L2 ≈ 0, i.e. conforming data).
     """
     mantissas = extract_mantissa(np.asarray(data, dtype=np.float64))
     valid_mask: npt.NDArray[np.bool_] = ~np.isnan(mantissas)
@@ -525,7 +530,7 @@ def mantissa_arc_test(
     angles = 2.0 * np.pi * m
     mean_x = float(np.mean(np.cos(angles)))
     mean_y = float(np.mean(np.sin(angles)))
-    mean_angle = float(np.mean(angles))
+    mean_angle = float(np.arctan2(mean_y, mean_x))
     l2 = float(np.sqrt(mean_x**2 + mean_y**2))
     p_value = float(np.exp(-n * l2**2))
 

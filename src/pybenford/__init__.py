@@ -2,6 +2,7 @@
 
 from pybenford.core import (
     BenfordAnalysis,
+    SmallSampleWarning,
     SummationResult,
     TestResult,
 )
@@ -35,6 +36,7 @@ __all__ = [
     "DataProfile",
     "DigitFrequencies",
     "DuplicationResult",
+    "SmallSampleWarning",
     "Stratum",
     "SummationFrequencies",
     "SummationResult",

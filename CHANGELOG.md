@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `SmallSampleWarning` — emitted when the constructor sample is below 1,000
+  or when the effective sample of the first-two, first-three, second-order,
+  or summation test is below 300 (Nigrini §4.2)
+- `SummationFrequencies.n_valid` — count of values with valid first-two
+  digits, the effective sample of the summation test
+
+### Fixed
+
+- Digit-boundary snap: ULP-relative correction in the positional digit
+  extractors so decimal-entered values a few ULPs below a digit boundary
+  extract correctly (e.g. `0.29` no longer yields first-two digits `28`)
+- Second-order test: `second_order_differences` returns raw sorted diffs;
+  the legacy `×10 + round` formula destroyed sub-unit spacings
+- `MantissaArcResult.mean_angle` is now the direction of the gravity center
+  (`arctan2(mean_y, mean_x)`), not the arithmetic mean of the angles
+- `z_statistic` returns 0 (not inf) when expected and observed are both 0
+
+### Changed
+
+- Supported Python floor raised from 3.9 to 3.10 (from Pass 1)
+- Summation test inferential output labeled heuristic: the z-score and
+  chi-square variance models assume count proportions, not sum shares
+
 ## [0.1.2] - 2026-05-07
 
 ### Changed
