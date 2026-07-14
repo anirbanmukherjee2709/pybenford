@@ -357,22 +357,13 @@ Sort mantissas ascending, plot vs expected uniform line. Straight line = conform
 
 ## 6. Implementation Constants (verified against notebook code)
 
-```python
-CRIT_CHI2 = {
-    8: {80: 11.03, 85: 12.027, 90: 13.362, 95: 15.507,
-        99: 20.090, 99.9: 26.124, 99.99: 31.827,
-        99.999: 37.332, 99.9999: 42.701, 99.99999: 47.972},
-    9: {80: 12.242, 85: 13.288, 90: 14.684, 95: 16.919,
-        99: 21.666, 99.9: 27.877}
-}
+`CRIT_CHI2` and `CONFS` (along with six other unreferenced constants) were
+removed from `pybenford.constants` in Pass 3a.
 
+```python
 CRIT_KS = {80: 1.073, 85: 1.138, 90: 1.224, 95: 1.358, 99: 1.628,
            99.9: 1.949, 99.99: 2.225, 99.999: 2.47,
            99.9999: 2.693, 99.99999: 2.899}
-
-CONFS = {80: 1.285, 85: 1.435, 90: 1.645, 95: 1.96,
-         99: 2.576, 99.9: 3.29, 99.99: 3.89, 99.999: 4.417,
-         99.9999: 4.892, 99.99999: 5.327}
 
 MAD_CONFORM = {
     1:  [0.006, 0.012, 0.015],      # first digits

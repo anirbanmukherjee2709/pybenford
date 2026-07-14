@@ -5,7 +5,11 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from pybenford.digits import extract_first_digit, extract_first_two_digits
+from pybenford.digits import (
+    extract_first_digit,
+    extract_first_three_digits,
+    extract_first_two_digits,
+)
 from pybenford.utils import (
     DataProfile,
     DigitFrequencies,
@@ -454,3 +458,133 @@ class TestNumberDuplication:
     def test_negative_values(self) -> None:
         result = number_duplication([-50, -50, 50])
         assert result.total_unique == 2
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 8. Vectorized bin counting — equivalence with the previous per-digit loop
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+def _loop_digit_counts(
+    data: object,
+    digit_extractor: object,
+    possible_digits: object,
+) -> np.ndarray:  # type: ignore[type-arg]
+    """The pre-vectorization per-digit loop, inlined as the oracle."""
+    arr = np.asarray(data, dtype=np.float64)
+    extracted = digit_extractor(arr)  # type: ignore[operator]
+    valid_digits = extracted[~np.isnan(extracted)].astype(np.int64)
+    possible = np.asarray(possible_digits, dtype=np.int64)
+    return np.array(
+        [np.count_nonzero(valid_digits == d) for d in possible],
+        dtype=np.int64,
+    )
+
+
+def _spy(monkeypatch: pytest.MonkeyPatch, name: str) -> list[str]:
+    """Wrap ``np.<name>`` to record calls while delegating to the original."""
+    calls: list[str] = []
+    real = getattr(np, name)
+
+    def wrapper(*args: object, **kwargs: object) -> object:
+        calls.append(name)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(np, name, wrapper)
+    return calls
+
+
+def _wide_extractor(values: object) -> np.ndarray:  # type: ignore[type-arg]
+    """Custom extractor mapping positives to 2.0**40 (exactly representable)."""
+    arr = np.asarray(values, dtype=np.float64)
+    return np.where(arr > 0, 2.0**40, 0.0)
+
+
+class TestDigitCountsVectorized:
+    def test_equivalence_with_loop_oracle(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        rng = np.random.default_rng(3)
+        data = 10 ** rng.uniform(0, 4, 50_000)
+        bincount_calls = _spy(monkeypatch, "bincount")
+        unique_calls = _spy(monkeypatch, "unique")
+        for extractor, possible in (
+            (extract_first_digit, range(1, 10)),
+            (extract_first_two_digits, range(10, 100)),
+            (extract_first_three_digits, range(100, 1000)),
+        ):
+            result = digit_counts(data, extractor, possible)
+            np.testing.assert_array_equal(
+                result.counts, _loop_digit_counts(data, extractor, possible)
+            )
+        # standard ranges must take the offset-bincount fast path
+        assert bincount_calls
+        assert not unique_calls
+
+    def test_empty_possible_digits_preserved(self) -> None:
+        result = digit_counts([1.5], extract_first_digit, [])
+        assert result.total == 0
+        assert result.digits.size == 0
+        assert result.counts.size == 0
+        assert result.proportions.size == 0
+
+    def test_negative_bin_preserved(self) -> None:
+        result = digit_counts([1.5], extract_first_digit, [-1, 1])
+        np.testing.assert_array_equal(result.counts, [0, 1])
+
+    def test_wide_bins_take_sparse_fallback(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        data = [1.0, -1.0, 2.0, 3.0]
+        for possible in ([0, 2**40], [-(2**40), 2**40]):
+            bincount_calls = _spy(monkeypatch, "bincount")
+            unique_calls = _spy(monkeypatch, "unique")
+            result = digit_counts(data, _wide_extractor, possible)
+            np.testing.assert_array_equal(
+                result.counts, _loop_digit_counts(data, _wide_extractor, possible)
+            )
+            # span > 1_000_000 must take the sparse branch
+            assert unique_calls
+            assert not bincount_calls
+            monkeypatch.undo()
+
+    def test_absent_wide_digit_takes_sparse_fallback(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        # the data value 2.0**40, not the bin range, forces the wide span
+        bincount_calls = _spy(monkeypatch, "bincount")
+        unique_calls = _spy(monkeypatch, "unique")
+        result = digit_counts([1.0], _wide_extractor, [0])
+        assert unique_calls
+        assert not bincount_calls
+        np.testing.assert_array_equal(result.counts, [0])
+        assert result.total == 0
+        np.testing.assert_array_equal(
+            result.counts, _loop_digit_counts([1.0], _wide_extractor, [0])
+        )
+
+    def test_absent_digits_count_zero(self) -> None:
+        result = digit_counts([111.0], extract_first_two_digits, range(10, 100))
+        expected = np.zeros(90, dtype=np.int64)
+        expected[11 - 10] = 1
+        np.testing.assert_array_equal(result.counts, expected)
+
+
+class TestSummationByDigitsVectorized:
+    def test_equivalence_with_loop_oracle(self) -> None:
+        rng = np.random.default_rng(3)
+        data = 10 ** rng.uniform(0, 4, 50_000)
+        result = summation_by_digits(data)
+        # inline loop oracle (previous implementation)
+        arr = np.asarray(data, dtype=np.float64).ravel()
+        ft = extract_first_two_digits(arr)
+        valid_mask = ~np.isnan(ft)
+        valid_arr = arr[valid_mask]
+        valid_ft = ft[valid_mask].astype(np.int64)
+        oracle_sums = np.array(
+            [float(np.sum(valid_arr[valid_ft == d])) for d in np.arange(10, 100)],
+            dtype=np.float64,
+        )
+        assert np.allclose(result.sums, oracle_sums, rtol=1e-9, atol=0)
+        np.testing.assert_array_equal(result.digits, np.arange(10, 100))
+        assert result.n_valid == len(valid_ft)
+
+    def test_absent_digits_sum_zero(self) -> None:
+        result = summation_by_digits([111.0])
+        assert result.sums[11 - 10] == 111.0
+        mask = result.digits != 11
+        assert np.all(result.sums[mask] == 0.0)

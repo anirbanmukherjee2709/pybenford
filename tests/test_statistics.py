@@ -507,3 +507,22 @@ class TestMantissaArc:
         assert res.mean_angle == pytest.approx(np.arctan2(res.mean_y, res.mean_x))
         arithmetic_mean = float(np.mean(2.0 * np.pi * res.mantissas))
         assert abs(res.mean_angle - arithmetic_mean) > 0.5
+
+
+# ---------------------------------------------------------------------------
+# Validation guards
+# ---------------------------------------------------------------------------
+
+
+class TestValidationGuards:
+    def test_chi_square_nonpositive_n_raises(self) -> None:
+        with pytest.raises(ValueError, match="n must be positive"):
+            chi_square_test(np.array([1, 2]), np.array([0.5, 0.5]), 0)
+
+    def test_chi_square_length_mismatch_raises(self) -> None:
+        with pytest.raises(ValueError, match="must have same length"):
+            chi_square_test(np.array([1, 2, 3]), np.array([0.5, 0.5]), 6)
+
+    def test_mad_length_mismatch_raises(self) -> None:
+        with pytest.raises(ValueError, match="must have same length"):
+            mad_test(np.array([0.5]), np.array([0.5, 0.5]), DigitTest.FIRST)

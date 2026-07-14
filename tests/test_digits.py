@@ -59,3 +59,16 @@ class TestBoundarySnap:
         assert extract_third_digit(x)[0] == int(s[2])
         assert extract_first_two_digits(x)[0] == int(s[:2])
         assert extract_first_three_digits(x)[0] == int(s[:3])
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Subnormal underflow-recompute branch
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+class TestSubnormalRecompute:
+    def test_subnormal_first_digit(self) -> None:
+        # 5e-324 is stored as the smallest subnormal, ~4.94e-324; 10**order
+        # underflows to 0 there, exercising the log-based recompute branch.
+        result = extract_first_digit(np.array([5e-324]))
+        np.testing.assert_array_equal(result, [4.0])

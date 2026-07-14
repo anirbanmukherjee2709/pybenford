@@ -14,6 +14,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   or summation test is below 300 (Nigrini §4.2)
 - `SummationFrequencies.n_valid` — count of values with valid first-two
   digits, the effective sample of the summation test
+- Census regression suite: locked end-to-end outputs on the bundled county
+  population estimates (`tests/test_regression.py`)
+- Distribution reference-table cross-checks: Nigrini's published digit
+  probability tables pinned against the first-principles computations
+  (`tests/test_distributions.py`)
+
+### Removed
+
+- `CRIT_CHI2` — unreferenced chi-square critical-value table
+- `CRIT_Z` — unreferenced per-digit Z critical values
+- `CONFS` — unreferenced alias of `CRIT_Z`
+- `P_VALUES` — unreferenced p-value table
+- `DOF` — unreferenced degrees-of-freedom table
+- `TEST_NAMES` — unreferenced test-identifier tuple
+- `MAD_CONFORM_MY_LAW` — unreferenced "My Law" MAD thresholds
+- `COLORS` — unreferenced palette (plotting uses its own local palette)
 
 ### Fixed
 
@@ -31,6 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Supported Python floor raised from 3.9 to 3.10 (from Pass 1)
 - Summation test inferential output labeled heuristic: the z-score and
   chi-square variance models assume count proportions, not sum shares
+- Vectorized digit counting (identical counts) and summation grouping
+  (order-of-magnitude speedup; grouped sums may differ from the previous
+  implementation within float summation-order error, ~1e-15 relative)
 
 ## [0.1.2] - 2026-05-07
 
