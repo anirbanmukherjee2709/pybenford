@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pybenford"
-version = "0.1.2"
+version = "0.2.0"
 description = "Professional-grade Benford's Law analysis toolkit for forensic accounting, auditing, and fraud detection"
 readme = "README.md"
 license = {text = "MIT"}
@@ -33,12 +33,15 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=1.22.0",
-    "matplotlib>=3.5.0",
     "scipy>=1.8.0",
 ]
 
 [project.optional-dependencies]
+plot = ["matplotlib>=3.5.0"]
 dev = [
+    "matplotlib>=3.5.0",
+    # numpy 2.5.x stubs use `type` statements unparseable under mypy's python_version = "3.10"
+    "numpy>=2.2,<2.5",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
     "ruff==0.15.21",
@@ -59,6 +62,9 @@ Issues = "https://github.com/anirbanmukherjee2709/pybenford/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pybenford"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["examples/"]
 
 [tool.ruff]
 target-version = "py310"

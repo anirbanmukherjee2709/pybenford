@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-17
+
+### Breaking
+
+- matplotlib is no longer a required dependency: the six `plot_*` functions
+  are now behind the optional `[plot]` extra with a lazy import. Plot users
+  must upgrade with `pip install "pybenford[plot]"`; accessing a plot
+  function (including via `from pybenford import *`) without matplotlib
+  raises an ImportError pointing at the extra
+- The sdist no longer ships `examples/` (the demo notebook and census data
+  remain in the GitHub repository)
+
 ### Added
 
 - `SmallSampleWarning` — emitted when the constructor sample is below 1,000
